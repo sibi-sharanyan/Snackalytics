@@ -61,6 +61,7 @@ const Popup = () => {
           console.log('ORDER, count totalPages', orders, count, totalPages);
 
           let finalTotalCost = 0;
+          const orderHashIds: string[] = [];
 
           const requests = Array.from(Array(totalPages).keys()).map((page) => {
             return limit(async () => {
@@ -82,10 +83,11 @@ const Popup = () => {
 
               for (let key in orders) {
                 const order = orders[key];
-                const { totalCost } = order;
+                const { totalCost, hashId } = order;
 
                 console.log(
-                  'order_id, totalCost',
+                  'hashId, totalCost',
+                  hashId,
                   totalCost,
                   currency(totalCost).value
                 );
@@ -95,6 +97,7 @@ const Popup = () => {
                 // }
 
                 pageTotalCost += currency(totalCost).value;
+                orderHashIds.push(hashId);
               }
 
               finalTotalCost += pageTotalCost;
@@ -107,17 +110,23 @@ const Popup = () => {
 
           console.log('totalCost', finalTotalCost);
 
-          const { data: orderData } = await axios.get(
-            'https://www.zomato.com/webroutes/order/details',
-            {
-              params: {
-                hashId: 'aAGZaAqQ',
-              },
-              headers,
-            }
-          );
+          const orderRequests = orderHashIds.map((hashId) => {
+            return limit(async () => {
+              const { data: orderData } = await axios.get(
+                'https://www.zomato.com/webroutes/order/details',
+                {
+                  params: {
+                    hashId,
+                  },
+                  headers,
+                }
+              );
 
-          console.log('orderData', orderData);
+              console.log('orderData', orderData);
+            });
+          });
+
+          await Promise.all(orderRequests);
         } catch (err) {
           console.log('cookies', cookies);
           setIsLoading(false);
