@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Zomato report",
+  "description": "Analyse your zomato data",
+  "options_page": "options.html",
+  "background": { "service_worker": "background.bundle.js" },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon-34.png"
+  },
+  "chrome_url_overrides": {},
+  "icons": {
+    "128": "icon-128.png"
+  },
+  "permissions": ["storage", "cookies"],
+  "host_permissions": ["*://*.zomato.com/"],
+  "content_scripts": [
+    {
+      "matches": ["*://*.zomato.com/"],
+      "js": ["contentScript.bundle.js"],
+      "css": ["content.styles.css"]
+    }
+  ],
+  "devtools_page": "devtools.html",
+  "web_accessible_resources": [
+    {
+      "resources": ["content.styles.css", "icon-128.png", "icon-34.png"],
+      "matches": []
+    }
+  ]
+}
