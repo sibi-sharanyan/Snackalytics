@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import './Popup.css';
 import '../../assets/styles/tailwind.css';
 import axios from 'axios';
+import pLimit from 'p-limit';
+import currency from 'currency.js';
+
+const limit = pLimit(10);
 
 const Popup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -40,17 +44,68 @@ const Popup = () => {
             'sec-ch-ua-mobile': '?1',
           };
 
-          const { data } = await axios.get(
-            'https://www.zomato.com/webroutes/user/orders',
-            {
-              params: {
-                page: 1,
+          const {
+            data: {
+              entities: { ORDER: orders },
+              sections: {
+                SECTION_USER_ORDER_HISTORY: { count, totalPages },
               },
-              headers,
-            }
-          );
+            },
+          } = await axios.get('https://www.zomato.com/webroutes/user/orders', {
+            params: {
+              page: 1,
+            },
+            headers,
+          });
 
-          console.log('data', data);
+          console.log('ORDER, count totalPages', orders, count, totalPages);
+
+          let finalTotalCost = 0;
+
+          const requests = Array.from(Array(totalPages).keys()).map((page) => {
+            return limit(async () => {
+              const {
+                data: {
+                  entities: { ORDER: orders },
+                },
+              } = await axios.get(
+                'https://www.zomato.com/webroutes/user/orders',
+                {
+                  params: {
+                    page: page + 1,
+                  },
+                  headers,
+                }
+              );
+
+              let pageTotalCost = 0;
+
+              for (let key in orders) {
+                const order = orders[key];
+                const { totalCost } = order;
+
+                console.log(
+                  'order_id, totalCost',
+                  totalCost,
+                  currency(totalCost).value
+                );
+
+                // if (totalCost && totalCost.split('₹').length > 1) {
+                //   pageTotalCost += Number(totalCost.split('₹')[1]);
+                // }
+
+                pageTotalCost += currency(totalCost).value;
+              }
+
+              finalTotalCost += pageTotalCost;
+
+              console.log('orders', orders, page, pageTotalCost);
+            });
+          });
+
+          await Promise.all(requests);
+
+          console.log('totalCost', finalTotalCost);
 
           const { data: orderData } = await axios.get(
             'https://www.zomato.com/webroutes/order/details',
