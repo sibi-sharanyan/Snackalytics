@@ -1,14 +1,21 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Popup.css';
 import '../../assets/styles/tailwind.css';
 import axios from 'axios';
 import pLimit from 'p-limit';
 import currency from 'currency.js';
+import { ZomatoOrder } from '../../types';
 
-const limit = pLimit(10);
+const limit = pLimit(5);
 
 const Popup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  useEffect(() => {
+    chrome.storage.local.get(['zomatoOrders'], (result) => {
+      console.log('Value currently is ', result);
+    });
+  }, []);
 
   const generateReport = () => {
     console.log('generateReport', chrome);
@@ -110,6 +117,8 @@ const Popup = () => {
 
           console.log('totalCost', finalTotalCost);
 
+          const zomatoOrders: ZomatoOrder[] = [];
+
           const orderRequests = orderHashIds.map((hashId) => {
             return limit(async () => {
               const { data: orderData } = await axios.get(
@@ -123,10 +132,22 @@ const Popup = () => {
               );
 
               console.log('orderData', orderData);
+
+              zomatoOrders.push(orderData);
             });
           });
 
           await Promise.all(orderRequests);
+
+          chrome.storage.local.set(
+            {
+              zomatoOrders: JSON.stringify(zomatoOrders),
+              reportGeneratedOn: new Date().toISOString(),
+            },
+            () => {
+              console.log('Report stored in chrome storage');
+            }
+          );
         } catch (err) {
           console.log('cookies', cookies);
           setIsLoading(false);
