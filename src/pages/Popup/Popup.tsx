@@ -6,18 +6,27 @@ import pLimit from 'p-limit';
 import currency from 'currency.js';
 import { ZomatoOrder } from '../../types';
 
-const limit = pLimit(5);
+const limit = pLimit(10);
 
 const Popup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isPreviousReportPresent, setIsPreviousReportPresent] =
+    useState<boolean>(false);
 
   useEffect(() => {
-    chrome.storage.local.get(['zomatoOrders'], (result) => {
-      console.log('Value currently is ', result);
-    });
+    chrome.storage.local.get(
+      ['zomatoOrders', 'reportGeneratedOn'],
+      (result) => {
+        console.log('Value currently is ', result.reportGeneratedOn);
+        if (result.zomatoOrders) {
+          setIsPreviousReportPresent(true);
+        }
+      }
+    );
   }, []);
 
   const generateReport = () => {
+    return;
     console.log('generateReport', chrome);
 
     chrome.cookies.getAll(
@@ -156,11 +165,27 @@ const Popup = () => {
     );
   };
 
+  const viewReport = () => {
+    chrome.tabs.create({ url: 'newtab.html' });
+  };
+
   return (
-    <div className="bg-gray-600 h-screen flex justify-center">
-      <button className="btn btn-md btn-primary mt-5" onClick={generateReport}>
+    <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10">
+      <button
+        className="btn btn-md btn-primary mt-5 w-48"
+        onClick={generateReport}
+      >
         Generate Report
       </button>
+
+      {isPreviousReportPresent && (
+        <button
+          className="btn btn-md btn-secondary mt-5 w-48"
+          onClick={viewReport}
+        >
+          View Report
+        </button>
+      )}
     </div>
   );
 };
