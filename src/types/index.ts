@@ -226,3 +226,10 @@ interface Itemtotal {
     identifier: string;
     associatedWithRes: boolean;
 }
+
+
+
+export interface IHighestOrder {
+    name: string;
+    totalCost: number;
+}
