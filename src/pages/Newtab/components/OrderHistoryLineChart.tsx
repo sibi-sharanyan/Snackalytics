@@ -173,7 +173,7 @@ export default function OrderHistoryLineChart({
     <div className="">
       <div className="flex mb-10">
         <select
-          className="select w-full max-w-xs mr-10 "
+          className="select w-full max-w-xs mr-10 select-primary"
           value={selectedTimeRange}
           onChange={(e) => {
             setSelectedTimeRange(Number(e.target.value));
@@ -185,7 +185,7 @@ export default function OrderHistoryLineChart({
         </select>
 
         <select
-          className="select w-full max-w-xs mr-10 mb-6"
+          className="select w-full max-w-xs mr-10 mb-6 select-primary"
           value={selectedFilterType}
           onChange={(e) => {
             setSelectedFilterType(Number(e.target.value));

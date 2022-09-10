@@ -58,8 +58,8 @@ export default function VegNonVegPieChart({
 
   return (
     <div className="">
-      <ResponsiveContainer width="100%" height={400}>
-        <PieChart width={400} height={400}>
+      <ResponsiveContainer width="100%" height={450}>
+        <PieChart width={500} height={500}>
           <Pie dataKey="value" data={chartData} fill="#82ca9d">
             {chartData.map((entry, index) => (
               <Cell key={`cell-${index}`} fill={entry.color} />

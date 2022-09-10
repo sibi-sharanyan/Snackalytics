@@ -63,7 +63,7 @@ export default function TopHotels({
   return (
     <div className="">
       <select
-        className="select w-full max-w-xs mr-10 mb-10"
+        className="select w-full max-w-xs mr-10 mb-10 select-primary"
         value={selectedFilterType}
         onChange={(e) => {
           setSelectedFilterType(Number(e.target.value));

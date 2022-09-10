@@ -105,7 +105,7 @@ const Newtab = () => {
     >
       <div className="flex-col space-y-20 w-full h-full">
         <select
-          className="select w-full max-w-xs mr-10"
+          className="select w-full max-w-xs mr-10 select-primary"
           value={selectedHotel}
           onChange={(e) => {
             setSelectedHotel(e.target.value);
