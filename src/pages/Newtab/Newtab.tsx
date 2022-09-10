@@ -5,11 +5,15 @@ import { IHighestOrder, ZomatoOrder } from '../../types';
 import dayjs from 'dayjs';
 import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
+import VegNonVegPieChart from './components/VegNonVegPieChart';
 
 const Newtab = () => {
   const [zomatoOrders, setZomatoOrders] = React.useState<ZomatoOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
+  const [totalCost, setTotalCost] = React.useState<string>('');
+  const [orderCount, setOrderCount] = React.useState<number>(0);
+  const [itemsCount, setItemsCount] = React.useState<number>(0);
 
   useEffect(() => {
     chrome.storage.local.get(
@@ -26,6 +30,19 @@ const Newtab = () => {
       }
     );
   }, []);
+
+  useEffect(() => {
+    calculateTotal();
+
+    const allItems = [];
+    zomatoOrders.forEach((order) => {
+      order.details.order.items.dish?.forEach((dish) => {
+        allItems.push(dish);
+      });
+    });
+
+    setItemsCount(allItems.length);
+  }, [zomatoOrders]);
 
   useEffect(() => {
     const uniqueHotels = zomatoOrders
@@ -49,42 +66,63 @@ const Newtab = () => {
       }
     });
 
-    alert(
-      `Total Price: ${currency(finalTotalPrice).format({
+    setTotalCost(
+      currency(finalTotalPrice).format({
         symbol: '₹',
-      })}`
+      })
     );
+
+    setOrderCount(zomatoOrders.length);
   };
 
   return (
-    <div className=" flex p-28 h-screen">
+    <div
+      className=" flex p-28 h-screen mx-auto"
+      style={{
+        maxWidth: '1800px',
+      }}
+    >
       <div className="flex-col space-y-20 w-full h-full">
-        <div className="flex">
-          <select
-            className="select w-full max-w-xs mr-10"
-            value={selectedHotel}
-            onChange={(e) => {
-              setSelectedHotel(e.target.value);
-            }}
-          >
-            <option value={''} disabled>
-              Pick Hotel
-            </option>
-            {uniqueHotels.map((hotel) => (
-              <option value={hotel}>{hotel}</option>
-            ))}
-          </select>
+        <select
+          className="select w-full max-w-xs mr-10"
+          value={selectedHotel}
+          onChange={(e) => {
+            setSelectedHotel(e.target.value);
+          }}
+        >
+          <option value={''} disabled>
+            Pick Hotel
+          </option>
+          {uniqueHotels.map((hotel) => (
+            <option value={hotel}>{hotel}</option>
+          ))}
+        </select>
+        <div className="flex w-full">
+          <div className="flex w-1/2">
+            <div className="space-y-10 shadow-lg p-6">
+              <div className="">
+                <div className="text-lg">Total Money Spent</div>
+                <div className="text-6xl font-bold">{totalCost}</div>
+              </div>
 
-          <div
-            className="btn btn-secondary"
-            onClick={() => calculateTotal(selectedHotel)}
-          >
-            Calculate total
+              <div className="">
+                <div className="text-lg">Total Orders</div>
+                <div className="text-6xl font-bold">{orderCount}</div>
+              </div>
+
+              <div className="">
+                <div className="text-lg">Total Items Ordered</div>
+                <div className="text-6xl font-bold">{itemsCount}</div>
+              </div>
+            </div>
+          </div>
+          <div className="w-1/2">
+            <VegNonVegPieChart zomatoOrders={zomatoOrders} />
           </div>
         </div>
 
-        <TopHotels zomatoOrders={zomatoOrders} uniqueHotels={uniqueHotels} />
         <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
+        <TopHotels zomatoOrders={zomatoOrders} uniqueHotels={uniqueHotels} />
       </div>
     </div>
   );

@@ -162,7 +162,7 @@ interface Saving {
     associatedWithRes: boolean;
 }
 
-interface Dish {
+export interface Dish {
     orderItemId: number;
     id: number;
     itemName: string;
@@ -176,6 +176,7 @@ interface Dish {
     type: string;
     mrpItem: number;
     tagIds: string;
+    tagSlugs: string[];
     isHidden: number;
     deterSendingItem: number;
     orderDishType: string;

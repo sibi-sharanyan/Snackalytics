@@ -51,7 +51,7 @@ export default function OrderHistoryLineChart({
     { time: string; value: number }[]
   >([]);
 
-  const [selectedTimeRange, setSelectedTimeRange] = React.useState<number>(1);
+  const [selectedTimeRange, setSelectedTimeRange] = React.useState<number>(2);
   const [selectedFilterType, setSelectedFilterType] = React.useState<number>(1);
 
   useEffect(() => {
