@@ -14,6 +14,8 @@ const Newtab = () => {
   const [totalCost, setTotalCost] = React.useState<string>('');
   const [orderCount, setOrderCount] = React.useState<number>(0);
   const [itemsCount, setItemsCount] = React.useState<number>(0);
+  const [medianOrderCost, setMedianOrderCost] = React.useState<string>('');
+  const [averageOrderCost, setAverageOrderCost] = React.useState<string>('');
 
   useEffect(() => {
     chrome.storage.local.get(
@@ -40,6 +42,19 @@ const Newtab = () => {
         allItems.push(dish);
       });
     });
+
+    const orderCosts = zomatoOrders.map(
+      (order) => order.details.order.totalCost
+    );
+    const medianOrderCost = orderCosts.sort((a, b) => a - b)[
+      Math.floor(orderCosts.length / 2)
+    ];
+
+    setMedianOrderCost(
+      currency(medianOrderCost).format({
+        symbol: '₹',
+      })
+    );
 
     setItemsCount(allItems.length);
   }, [zomatoOrders]);
@@ -72,15 +87,21 @@ const Newtab = () => {
       })
     );
 
+    setAverageOrderCost(
+      currency(finalTotalPrice / zomatoOrders.length).format({
+        symbol: '₹',
+      })
+    );
+
     setOrderCount(zomatoOrders.length);
   };
 
   return (
     <div
-      className=" flex p-28 h-screen mx-auto"
-      style={{
-        maxWidth: '1800px',
-      }}
+      className=" flex p-28 h-screen mx-auto max-w-screen-2xl"
+      // style={{
+      //   maxWidth: '1800px',
+      // }}
     >
       <div className="flex-col space-y-20 w-full h-full">
         <select
@@ -110,9 +131,22 @@ const Newtab = () => {
                 <div className="text-6xl font-bold">{orderCount}</div>
               </div>
 
-              <div className="">
-                <div className="text-lg">Total Items Ordered</div>
-                <div className="text-6xl font-bold">{itemsCount}</div>
+              <div className="flex justify-between items-start">
+                <div className="">
+                  <div className="text-lg">Total Items Ordered</div>
+                  <div className="text-6xl font-bold">{itemsCount}</div>
+                </div>
+
+                <div className="space-y-4">
+                  <div className="">
+                    <div className="text-sm">Median Order Cost</div>
+                    <div className="text-xl font-bold">{medianOrderCost}</div>
+                  </div>
+                  <div className="">
+                    <div className="text-sm">Average Order Cost</div>
+                    <div className="text-xl font-bold">{averageOrderCost}</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
