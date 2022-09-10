@@ -2,7 +2,9 @@ import currency from 'currency.js';
 import React, { useEffect } from 'react';
 import '../../assets/styles/tailwind.css';
 import { IHighestOrder, ZomatoOrder } from '../../types';
+import dayjs from 'dayjs';
 import TopHotels from './components/TopHotels';
+import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 
 const Newtab = () => {
   const [zomatoOrders, setZomatoOrders] = React.useState<ZomatoOrder[]>([]);
@@ -12,6 +14,7 @@ const Newtab = () => {
   const [mostSpentHotels, setMostSpentHotels] = React.useState<IHighestOrder[]>(
     []
   );
+
   const [mostFrequentlyOrderedHotels, setMostFrequentlyOrderedHotels] =
     React.useState<IHighestOrder[]>([]);
 
@@ -105,8 +108,8 @@ const Newtab = () => {
   };
 
   return (
-    <div className="bg-gray-300 h-screen flex p-28">
-      <div className="flex-col space-y-20 w-full">
+    <div className=" flex p-28 h-screen">
+      <div className="flex-col space-y-20 w-full h-full">
         <div className="flex">
           <select
             className="select w-full max-w-xs mr-10"
@@ -134,6 +137,7 @@ const Newtab = () => {
         {/* <TopHotels data={highestOrders} /> */}
         <TopHotels data={mostSpentHotels} />
         <TopHotels data={mostFrequentlyOrderedHotels} />
+        <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
       </div>
     </div>
   );
