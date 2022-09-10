@@ -56,30 +56,38 @@ export default function OrderHistoryLineChart({
 
   useEffect(() => {
     if (selectedTimeRange === 1) {
-      const last30Days = zomatoOrders.filter((order) => {
-        const orderDate = dayjs(order.details.orderDate.split('at')[0]);
-        return orderDate.isAfter(dayjs().subtract(30, 'day'));
+      const last30Days = Array.from({ length: 30 }, (_, i) => {
+        const date = new Date();
+        date.setDate(date.getMonth() - i);
+        return dayjs(date).format('DD MMM YYYY');
       });
 
       console.log('last30Days', last30Days);
 
-      const chartData = last30Days.reduce((acc, order) => {
-        const orderDate = dayjs(order.details.orderDate.split('at')[0]);
-        const existingData = acc.find(
-          (data) => data.time === orderDate.format('DD MMM')
-        );
-        if (existingData) {
-          existingData.value += 1;
-        } else {
-          acc.push({
-            time: orderDate.format('DD MMM'),
-            value: 1,
-          });
-        }
-        return acc;
-      }, [] as { time: string; value: number }[]);
+      const pastOrdersData = last30Days.map((day) => {
+        const orders = zomatoOrders.filter((order) => {
+          return (
+            dayjs(order.details.orderDate.split('at')[0]).format(
+              'DD MMM YYYY'
+            ) === day
+          );
+        });
 
-      setChartData(chartData);
+        const finalValue =
+          selectedFilterType === 1
+            ? orders.length
+            : orders.reduce(
+                (acc, order) => acc + order.details.order.totalCost,
+                0
+              );
+
+        return {
+          value: finalValue,
+          time: day.split(' ')[0] + ' ' + day.split(' ')[1],
+        };
+      });
+
+      setChartData(pastOrdersData.reverse());
     } else if (selectedTimeRange === 4) {
       const oldestOrder = zomatoOrders.sort((a, b) => {
         return (

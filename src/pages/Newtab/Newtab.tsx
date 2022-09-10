@@ -83,7 +83,6 @@ const Newtab = () => {
           </div>
         </div>
 
-        {/* <TopHotels data={highestOrders} /> */}
         <TopHotels zomatoOrders={zomatoOrders} uniqueHotels={uniqueHotels} />
         <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
       </div>
