@@ -31,7 +31,7 @@ const timeRanges = [
   },
 ];
 
-const filterType = [
+export const filterType = [
   {
     label: 'By Orders Placed',
     value: 1,
@@ -163,9 +163,9 @@ export default function OrderHistoryLineChart({
 
   return (
     <div className="">
-      <div className="flex">
+      <div className="flex mb-10">
         <select
-          className="select w-full max-w-xs mr-10 mb-6"
+          className="select w-full max-w-xs mr-10 "
           value={selectedTimeRange}
           onChange={(e) => {
             setSelectedTimeRange(Number(e.target.value));
@@ -188,7 +188,7 @@ export default function OrderHistoryLineChart({
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={600}>
+      <ResponsiveContainer width="100%" height={400}>
         <LineChart width={300} height={100} data={chartData}>
           <Line
             type="monotone"

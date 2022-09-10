@@ -10,13 +10,6 @@ const Newtab = () => {
   const [zomatoOrders, setZomatoOrders] = React.useState<ZomatoOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
-  const [highestOrders, setHighestOrders] = React.useState<IHighestOrder[]>([]);
-  const [mostSpentHotels, setMostSpentHotels] = React.useState<IHighestOrder[]>(
-    []
-  );
-
-  const [mostFrequentlyOrderedHotels, setMostFrequentlyOrderedHotels] =
-    React.useState<IHighestOrder[]>([]);
 
   useEffect(() => {
     chrome.storage.local.get(
@@ -39,50 +32,6 @@ const Newtab = () => {
       .map((order) => order.details.resInfo.name)
       .filter((value, index, self) => self.indexOf(value) === index);
     setUniqueHotels(uniqueHotels);
-
-    // get top 10 highest cost hotels by totalCost
-    let topHighestOrders = zomatoOrders
-      .sort((a, b) => b.details.order.totalCost - a.details.order.totalCost)
-      .slice(0, 5)
-      .map((order) => {
-        return {
-          name: order.details.resInfo.name,
-          totalCost: order.details.order.totalCost,
-        };
-      });
-
-    //get array of objects with resInfo.name and sum of totalCost
-    const mostOrderedHotels = uniqueHotels
-      .map((hotel) => {
-        const totalCost = zomatoOrders
-          .filter((order) => order.details.resInfo.name === hotel)
-          .reduce((acc, order) => acc + order.details.order.totalCost, 0);
-        return {
-          name: hotel,
-          totalCost,
-        };
-      })
-      .sort((a, b) => b.totalCost - a.totalCost)
-      .slice(0, 5);
-
-    const _mostFrequentlyOrderedHotels = uniqueHotels
-      .map((hotel) => {
-        const totalCost = zomatoOrders.filter(
-          (order) => order.details.resInfo.name === hotel
-        ).length;
-        return {
-          name: hotel,
-          totalCost,
-        };
-      })
-      .sort((a, b) => b.totalCost - a.totalCost)
-      .slice(0, 5);
-
-    setHighestOrders(topHighestOrders);
-    setMostFrequentlyOrderedHotels(_mostFrequentlyOrderedHotels);
-    setMostSpentHotels(mostOrderedHotels);
-
-    console.log('topHighestOrders', mostOrderedHotels);
   }, [zomatoOrders]);
 
   const calculateTotal = (hotel?: string) => {
@@ -135,8 +84,7 @@ const Newtab = () => {
         </div>
 
         {/* <TopHotels data={highestOrders} /> */}
-        <TopHotels data={mostSpentHotels} />
-        <TopHotels data={mostFrequentlyOrderedHotels} />
+        <TopHotels zomatoOrders={zomatoOrders} uniqueHotels={uniqueHotels} />
         <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
       </div>
     </div>
