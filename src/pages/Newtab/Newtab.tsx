@@ -1,7 +1,7 @@
 import currency from 'currency.js';
 import React, { useEffect } from 'react';
 import '../../assets/styles/tailwind.css';
-import { IHighestOrder, ZomatoOrder } from '../../types';
+import { Dish, IHighestOrder, ZomatoOrder } from '../../types';
 import dayjs from 'dayjs';
 import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
@@ -13,7 +13,7 @@ const Newtab = () => {
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
   const [totalCost, setTotalCost] = React.useState<string>('');
   const [orderCount, setOrderCount] = React.useState<number>(0);
-  const [itemsCount, setItemsCount] = React.useState<number>(0);
+  const [items, setItems] = React.useState<Dish[]>([]);
   const [medianOrderCost, setMedianOrderCost] = React.useState<string>('');
   const [averageOrderCost, setAverageOrderCost] = React.useState<string>('');
 
@@ -36,7 +36,7 @@ const Newtab = () => {
   useEffect(() => {
     calculateTotal();
 
-    const allItems = [];
+    const allItems: Dish[] = [];
     zomatoOrders.forEach((order) => {
       order.details.order.items.dish?.forEach((dish) => {
         allItems.push(dish);
@@ -56,7 +56,7 @@ const Newtab = () => {
       })
     );
 
-    setItemsCount(allItems.length);
+    setItems(allItems);
   }, [zomatoOrders]);
 
   useEffect(() => {
@@ -143,7 +143,7 @@ const Newtab = () => {
               <div className="flex justify-between items-start">
                 <div className="">
                   <div className="text-lg">Total Items Ordered</div>
-                  <div className="text-5xl font-bold">{itemsCount}</div>
+                  <div className="text-5xl font-bold">{items.length}</div>
                 </div>
 
                 <div className="space-y-4">
@@ -165,7 +165,11 @@ const Newtab = () => {
         </div>
 
         <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
-        <TopHotels zomatoOrders={zomatoOrders} uniqueHotels={uniqueHotels} />
+        <TopHotels
+          zomatoOrders={zomatoOrders}
+          items={items}
+          uniqueHotels={uniqueHotels}
+        />
       </div>
     </div>
   );
