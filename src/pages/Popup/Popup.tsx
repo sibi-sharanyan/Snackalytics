@@ -5,14 +5,16 @@ import axios from 'axios';
 import pLimit from 'p-limit';
 import currency from 'currency.js';
 import { ZomatoOrder } from '../../types';
-import { Line, Circle } from 'rc-progress';
+import { Circle } from 'rc-progress';
 
 import {
   BsFillHeartFill,
   BsGithub,
   BsLinkedin,
   BsTwitter,
+  BsInfoCircleFill,
 } from 'react-icons/bs/index';
+import dayjs from 'dayjs';
 
 const limit = pLimit(10);
 
@@ -20,6 +22,9 @@ const Popup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreviousReportPresent, setIsPreviousReportPresent] =
     useState<boolean>(false);
+  const [reportGeneratedOn, setReportGeneratedOn] = useState<string>(
+    '2021-09-11T18:13:31.402Z'
+  ); //initialize with a year old string, to prevent no data case
 
   const [requestsMade, setRequestsMade] = useState<number>(0);
   const [totalRequestsRequired, setTotalRequestsRequired] = useState<number>(0);
@@ -44,6 +49,7 @@ const Popup = () => {
       (result) => {
         console.log('Value currently is ', result.reportGeneratedOn);
         if (result.zomatoOrders) {
+          setReportGeneratedOn(result.reportGeneratedOn);
           setIsPreviousReportPresent(true);
         }
       }
@@ -198,21 +204,42 @@ const Popup = () => {
 
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
-      {isZomatoTab && (
-        <div className="w-full flex flex-col justify-center">
-          {!isLoading && (
-            <button
-              className="btn btn-md btn-primary mt-5 w-48"
-              onClick={generateReport}
-            >
-              Generate Report
-            </button>
-          )}
+      {isZomatoTab && !isLoading && (
+        <div className="w-full h-full flex flex-col justify-center items-center">
+          <p className="text-base px-10 text-white text-center">
+            Please make sure you're logged in and then click the below button.
+          </p>
 
-          {isPreviousReportPresent && !isLoading && (
+          <div className="flex flex-col items-center space-y-2">
+            {}
+
+            {!(dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59) && (
+              <button
+                className={`btn btn-md btn-primary mt-5 w-48`}
+                onClick={generateReport}
+              >
+                Analyze Orders
+              </button>
+            )}
+
+            {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59 && (
+              <div
+                className="tooltip"
+                data-tip="Click the view report button below to see your report. Please wait an hour since the last report generation to be able to generate the report again"
+              >
+                <button
+                  className={`btn btn-md btn-primary mt-5 w-48 btn-disabled`}
+                >
+                  Analyze Orders
+                </button>{' '}
+              </div>
+            )}
+          </div>
+
+          {isPreviousReportPresent && (
             <button
-              className="btn btn-md btn-secondary mt-5 w-48"
               onClick={viewReport}
+              className="text-blue-300 underline cursor-pointer text-lg mt-6"
             >
               View Report
             </button>
@@ -296,11 +323,20 @@ const Popup = () => {
       </div> */}
 
       {isLoading && (
-        <Circle
-          percent={Math.round((requestsMade / totalRequestsRequired) * 100)}
-          strokeWidth={7}
-          strokeColor="#43416e"
-        />
+        <>
+          <Circle
+            percent={
+              Math.round((requestsMade / totalRequestsRequired) * 100) || 0
+            }
+            strokeWidth={6}
+            className="px-10 pt-4"
+            strokeColor="#43416e"
+          />
+          <p className="text-base px-10 text-white text-center">
+            Fetching and analyzing your orders. Please wait. This may take a few
+            seconds...
+          </p>
+        </>
       )}
     </div>
   );
