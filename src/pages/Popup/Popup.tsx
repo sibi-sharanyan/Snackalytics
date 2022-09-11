@@ -7,6 +7,13 @@ import currency from 'currency.js';
 import { ZomatoOrder } from '../../types';
 import { Line, Circle } from 'rc-progress';
 
+import {
+  BsFillHeartFill,
+  BsGithub,
+  BsLinkedin,
+  BsTwitter,
+} from 'react-icons/bs/index';
+
 const limit = pLimit(10);
 
 const Popup = () => {
@@ -190,7 +197,7 @@ const Popup = () => {
   };
 
   return (
-    <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10">
+    <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
       {isZomatoTab && (
         <div className="w-full flex flex-col justify-center">
           {!isLoading && (
@@ -214,11 +221,64 @@ const Popup = () => {
       )}
 
       {!isZomatoTab && (
-        <div className="w-full flex flex-col justify-center">
-          <p className="text-white text-center text-lg">
-            Please open Zomato in a new tab, login to your account and click on
-            the extension icon
+        <div className="w-full flex flex-col justify-center px-4 h-full items-center">
+          <p className="text-white text-center text-base">
+            Please open{' '}
+            <a
+              href="https://www.zomato.com"
+              target="_blank"
+              className="text-blue-300 underline cursor-pointer"
+              rel="noreferrer"
+            >
+              <code>https://www.zomato.com</code>
+            </a>{' '}
+            in a new tab, login to your account and click on the extension icon.
           </p>
+
+          <div className="flex flex-col space-y-3 items-center mt-6">
+            <div className="flex space-x-2 items-center text-white">
+              <div>Made with</div>
+              <BsFillHeartFill color="red" />
+              <div>
+                by <strong>Sibi</strong>
+              </div>
+            </div>
+            <div className="flex space-x-10">
+              <a
+                href="https://github.com/sibi-sharanyan"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BsGithub className="text-xl cursor-pointer text-white" />
+              </a>
+
+              <a
+                href="https://www.linkedin.com/in/sibi-sharanyan"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BsLinkedin className="text-xl cursor-pointer text-white" />
+              </a>
+              <a
+                href="https://twitter.com/sibi_sharanyan"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <BsTwitter className="text-xl cursor-pointer text-white" />
+              </a>
+            </div>
+            <a
+              href="https://www.buymeacoffee.com/sibisharanyan"
+              target="_blank"
+              rel="noreferrer"
+            >
+              <img
+                src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+                alt="Buy Me A Coffee"
+                className="w-32 ml-1"
+              />
+            </a>
+          </div>
         </div>
       )}
 
