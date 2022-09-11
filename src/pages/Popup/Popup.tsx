@@ -211,8 +211,6 @@ const Popup = () => {
           </p>
 
           <div className="flex flex-col items-center space-y-2">
-            {}
-
             {!(dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59) && (
               <button
                 className={`btn btn-md btn-primary mt-5 w-48`}
@@ -225,7 +223,7 @@ const Popup = () => {
             {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59 && (
               <div
                 className="tooltip"
-                data-tip="Click the view report button below to see your report. Please wait an hour since the last report generation to be able to generate the report again"
+                data-tip="Click the view report button below to see your report. Please wait an hour since the last report generation to be able to analyze your orders again"
               >
                 <button
                   className={`btn btn-md btn-primary mt-5 w-48 btn-disabled`}
@@ -332,7 +330,7 @@ const Popup = () => {
             className="px-10 pt-4"
             strokeColor="#43416e"
           />
-          <p className="text-base px-10 text-white text-center">
+          <p className="text-base px-10 text-white text-center pb-2">
             Fetching and analyzing your orders. Please wait. This may take a few
             seconds...
           </p>
