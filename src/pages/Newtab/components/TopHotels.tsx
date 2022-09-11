@@ -61,9 +61,9 @@ export default function TopHotels({
   }, [zomatoOrders, uniqueHotels, selectedFilterType]);
 
   return (
-    <div className="flex flex-col items-start">
+    <div className="">
       <select
-        className="select w-full max-w-xs mr-10 mb-2 select-primary"
+        className="select w-full max-w-xs mr-10 mb-10 select-primary"
         value={selectedFilterType}
         onChange={(e) => {
           setSelectedFilterType(Number(e.target.value));
@@ -73,7 +73,6 @@ export default function TopHotels({
           <option value={filterType.value}>{filterType.label}</option>
         ))}
       </select>
-
       <ResponsiveContainer width="100%" height={400}>
         <BarChart
           width={500}

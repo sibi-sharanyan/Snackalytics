@@ -74,9 +74,9 @@ export default function VegNonVegPieChart({
   }, [zomatoOrders, selectedFilterType]);
 
   return (
-    <div className="">
+    <div className="flex flex-col w-full items-center">
       <select
-        className="select w-full max-w-xs mr-10 mb-10 select-primary"
+        className="select w-full max-w-xs mr-10 mb-1 select-primary"
         value={selectedFilterType}
         onChange={(e) => {
           setSelectedFilterType(Number(e.target.value));
