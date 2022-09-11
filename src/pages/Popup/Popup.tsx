@@ -27,7 +27,7 @@ const Popup = () => {
 
       console.log(url.hostname);
 
-      if (url.hostname === 'zomato.com') {
+      if (url.hostname === 'www.zomato.com' || url.hostname === 'zomato.com') {
         setIsZomatoTab(true);
       }
     });
@@ -191,7 +191,7 @@ const Popup = () => {
 
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10">
-      {true && (
+      {isZomatoTab && (
         <div className="w-full flex flex-col justify-center">
           {!isLoading && (
             <button
