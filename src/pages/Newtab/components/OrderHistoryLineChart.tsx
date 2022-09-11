@@ -31,7 +31,7 @@ const timeRanges = [
   },
 ];
 
-export const filterType = [
+export const filterTypes = [
   {
     label: 'By Orders Placed',
     value: 1,
@@ -191,7 +191,7 @@ export default function OrderHistoryLineChart({
             setSelectedFilterType(Number(e.target.value));
           }}
         >
-          {filterType.map((filterType) => (
+          {filterTypes.map((filterType) => (
             <option value={filterType.value}>{filterType.label}</option>
           ))}
         </select>

@@ -8,12 +8,15 @@ import {
   Cell,
 } from 'recharts';
 import { Dish, ZomatoOrder } from '../../../types';
+import { filterTypes } from './OrderHistoryLineChart';
 
 export default function VegNonVegPieChart({
   zomatoOrders,
 }: {
   zomatoOrders: ZomatoOrder[];
 }) {
+  const [selectedFilterType, setSelectedFilterType] = React.useState<number>(1);
+
   const [chartData, setChartData] = React.useState<
     { name: string; value: number; color: string }[]
   >([]);
@@ -37,27 +40,53 @@ export default function VegNonVegPieChart({
 
     console.log('allItems', allItems, vegItems, nonVegItems, eggItems);
 
+    const vegItemsTotalCost = vegItems.reduce(
+      (acc, item) => acc + item.totalCost,
+      0
+    );
+    const nonVegItemsTotalCost = nonVegItems.reduce(
+      (acc, item) => acc + item.totalCost,
+      0
+    );
+    const eggItemsTotalCost = eggItems.reduce(
+      (acc, item) => acc + item.totalCost,
+      0
+    );
+
     setChartData([
       {
         name: 'Veg',
-        value: vegItems.length,
+        value: selectedFilterType === 2 ? vegItemsTotalCost : vegItems.length,
         color: '#8884d8',
       },
       {
         name: 'Non-Veg',
-        value: nonVegItems.length,
+        value:
+          selectedFilterType === 2 ? nonVegItemsTotalCost : nonVegItems.length,
         color: '#43416e',
       },
       {
         name: 'Egg',
-        value: eggItems.length,
+        value: selectedFilterType === 2 ? eggItemsTotalCost : eggItems.length,
         color: '#706db5',
       },
     ]);
-  }, [zomatoOrders]);
+  }, [zomatoOrders, selectedFilterType]);
 
   return (
     <div className="">
+      <select
+        className="select w-full max-w-xs mr-10 mb-10 select-primary"
+        value={selectedFilterType}
+        onChange={(e) => {
+          setSelectedFilterType(Number(e.target.value));
+        }}
+      >
+        {filterTypes.map((filterType) => (
+          <option value={filterType.value}>{filterType.label}</option>
+        ))}
+      </select>
+
       <ResponsiveContainer width="100%" height={450}>
         <PieChart width={500} height={500}>
           <Pie dataKey="value" data={chartData} fill="#82ca9d">

@@ -126,15 +126,24 @@ const Newtab = () => {
                 <div className="text-6xl font-bold">{totalCost}</div>
               </div>
 
-              <div className="">
-                <div className="text-lg">Total Orders</div>
-                <div className="text-6xl font-bold">{orderCount}</div>
+              <div className="flex justify-between items-start">
+                <div className="">
+                  <div className="text-lg">Total Orders</div>
+                  <div className="text-5xl font-bold">{orderCount}</div>
+                </div>
+
+                <div className="">
+                  <div className="text-lg">Total Restaurants</div>
+                  <div className="text-5xl font-bold">
+                    {uniqueHotels.length}
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between items-start">
                 <div className="">
                   <div className="text-lg">Total Items Ordered</div>
-                  <div className="text-6xl font-bold">{itemsCount}</div>
+                  <div className="text-5xl font-bold">{itemsCount}</div>
                 </div>
 
                 <div className="space-y-4">

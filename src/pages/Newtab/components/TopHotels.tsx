@@ -11,7 +11,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import { IHighestOrder, ZomatoOrder } from '../../../types';
-import { filterType } from './OrderHistoryLineChart';
+import { filterTypes } from './OrderHistoryLineChart';
 
 export default function TopHotels({
   zomatoOrders,
@@ -61,15 +61,15 @@ export default function TopHotels({
   }, [zomatoOrders, uniqueHotels, selectedFilterType]);
 
   return (
-    <div className="">
+    <div className="flex flex-col items-start">
       <select
-        className="select w-full max-w-xs mr-10 mb-10 select-primary"
+        className="select w-full max-w-xs mr-10 mb-2 select-primary"
         value={selectedFilterType}
         onChange={(e) => {
           setSelectedFilterType(Number(e.target.value));
         }}
       >
-        {filterType.map((filterType) => (
+        {filterTypes.map((filterType) => (
           <option value={filterType.value}>{filterType.label}</option>
         ))}
       </select>
