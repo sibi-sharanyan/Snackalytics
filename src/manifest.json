@@ -12,7 +12,7 @@
   "icons": {
     "128": "icon-128.png"
   },
-  "permissions": ["storage", "cookies", "unlimitedStorage"],
+  "permissions": ["storage", "cookies", "unlimitedStorage", "activeTab"],
   "host_permissions": ["*://*.zomato.com/"],
   "content_scripts": [
     {

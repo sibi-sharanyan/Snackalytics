@@ -5,6 +5,7 @@ import axios from 'axios';
 import pLimit from 'p-limit';
 import currency from 'currency.js';
 import { ZomatoOrder } from '../../types';
+import { Line, Circle } from 'rc-progress';
 
 const limit = pLimit(10);
 
@@ -13,7 +14,24 @@ const Popup = () => {
   const [isPreviousReportPresent, setIsPreviousReportPresent] =
     useState<boolean>(false);
 
+  const [requestsMade, setRequestsMade] = useState<number>(0);
+  const [totalRequestsRequired, setTotalRequestsRequired] = useState<number>(0);
+
+  const [isZomatoTab, setIsZomatoTab] = useState<boolean>(false);
+
   useEffect(() => {
+    chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
+      console.log(tabs[0].url, tabs[0]);
+
+      const url = new URL(tabs[0].url as string);
+
+      console.log(url.hostname);
+
+      if (url.hostname === 'zomato.com') {
+        setIsZomatoTab(true);
+      }
+    });
+
     chrome.storage.local.get(
       ['zomatoOrders', 'reportGeneratedOn'],
       (result) => {
@@ -26,7 +44,6 @@ const Popup = () => {
   }, []);
 
   const generateReport = () => {
-    return;
     console.log('generateReport', chrome);
 
     chrome.cookies.getAll(
@@ -35,7 +52,6 @@ const Popup = () => {
         setIsLoading(true);
         try {
           console.log('cookies', cookies);
-          setIsLoading(false);
 
           const cookieMap: { [name: string]: string } = {};
 
@@ -76,6 +92,8 @@ const Popup = () => {
 
           console.log('ORDER, count totalPages', orders, count, totalPages);
 
+          setTotalRequestsRequired(count + totalPages);
+
           let finalTotalCost = 0;
           const orderHashIds: string[] = [];
 
@@ -95,6 +113,8 @@ const Popup = () => {
                 }
               );
 
+              setRequestsMade((prev) => prev + 1);
+
               let pageTotalCost = 0;
 
               for (let key in orders) {
@@ -107,10 +127,6 @@ const Popup = () => {
                   totalCost,
                   currency(totalCost).value
                 );
-
-                // if (totalCost && totalCost.split('₹').length > 1) {
-                //   pageTotalCost += Number(totalCost.split('₹')[1]);
-                // }
 
                 pageTotalCost += currency(totalCost).value;
                 orderHashIds.push(hashId);
@@ -140,6 +156,8 @@ const Popup = () => {
                 }
               );
 
+              setRequestsMade((prev) => prev + 1);
+
               console.log('orderData', orderData);
 
               zomatoOrders.push(orderData);
@@ -157,6 +175,8 @@ const Popup = () => {
               console.log('Report stored in chrome storage');
             }
           );
+
+          setIsLoading(false);
         } catch (err) {
           console.log('cookies', cookies);
           setIsLoading(false);
@@ -171,20 +191,56 @@ const Popup = () => {
 
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10">
-      <button
-        className="btn btn-md btn-primary mt-5 w-48"
-        onClick={generateReport}
-      >
-        Generate Report
-      </button>
+      {true && (
+        <div className="w-full flex flex-col justify-center">
+          {!isLoading && (
+            <button
+              className="btn btn-md btn-primary mt-5 w-48"
+              onClick={generateReport}
+            >
+              Generate Report
+            </button>
+          )}
 
-      {isPreviousReportPresent && (
-        <button
-          className="btn btn-md btn-secondary mt-5 w-48"
-          onClick={viewReport}
-        >
-          View Report
-        </button>
+          {isPreviousReportPresent && !isLoading && (
+            <button
+              className="btn btn-md btn-secondary mt-5 w-48"
+              onClick={viewReport}
+            >
+              View Report
+            </button>
+          )}
+        </div>
+      )}
+
+      {!isZomatoTab && (
+        <div className="w-full flex flex-col justify-center">
+          <p className="text-white text-center text-lg">
+            Please open Zomato in a new tab, login to your account and click on
+            the extension icon
+          </p>
+        </div>
+      )}
+
+      {/* <div>
+        <div className="">
+          <div className="">
+            Percentage{' '}
+            {Math.round((requestsMade / totalRequestsRequired) * 100)}{' '}
+          </div>
+
+          <div className="">totalRequestsRequired: {totalRequestsRequired}</div>
+
+          <div className="">requestsMade: {requestsMade}</div>
+        </div>
+      </div> */}
+
+      {isLoading && (
+        <Circle
+          percent={Math.round((requestsMade / totalRequestsRequired) * 100)}
+          strokeWidth={7}
+          strokeColor="#43416e"
+        />
       )}
     </div>
   );
