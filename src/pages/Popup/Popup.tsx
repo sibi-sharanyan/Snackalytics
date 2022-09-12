@@ -30,6 +30,7 @@ const Popup = () => {
   const [totalRequestsRequired, setTotalRequestsRequired] = useState<number>(0);
 
   const [isZomatoTab, setIsZomatoTab] = useState<boolean>(false);
+  const [isSwiggyTab, setIsSwiggyTab] = useState<boolean>(false);
 
   useEffect(() => {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
@@ -41,6 +42,11 @@ const Popup = () => {
 
       if (url.hostname === 'www.zomato.com' || url.hostname === 'zomato.com') {
         setIsZomatoTab(true);
+      } else if (
+        url.hostname === 'www.swiggy.com' ||
+        url.hostname === 'swiggy.com'
+      ) {
+        setIsSwiggyTab(true);
       }
     });
 
@@ -179,9 +185,38 @@ const Popup = () => {
 
           await Promise.all(orderRequests);
 
+          // order.details.resInfo.name
+          // order.details.order.totalCost
+
+          const zomatoOrderMinimal = zomatoOrders.map((order) => {
+            return {
+              details: {
+                resInfo: {
+                  name: order.details.resInfo.name,
+                },
+                order: {
+                  totalCost: order.details.order.totalCost,
+                  items: {
+                    dish: order.details.order.items.dish.map((dish) => {
+                      return {
+                        itemName: dish.itemName,
+                        totalCost: dish.totalCost,
+                        quantity: dish.quantity,
+                        tagSlugs: dish.tagSlugs,
+                      };
+                    }),
+                  },
+                },
+                orderDate: order.details.orderDate.split('at')[0],
+              },
+            };
+          });
+
+          console.log('zomatoOrderMinimal', zomatoOrderMinimal);
+
           chrome.storage.local.set(
             {
-              zomatoOrders: JSON.stringify(zomatoOrders),
+              zomatoOrders: JSON.stringify(zomatoOrderMinimal),
               reportGeneratedOn: new Date().toISOString(),
             },
             () => {
@@ -198,29 +233,124 @@ const Popup = () => {
     );
   };
 
+  const generateSwiggyReport = () => {
+    chrome.cookies.getAll(
+      { url: 'https://www.swiggy.com' },
+      async (cookies) => {
+        // setIsLoading(true);
+        let ordersCollection: any[] = [];
+        console.log('cookies', cookies);
+
+        const cookieMap: { [name: string]: string } = {};
+
+        cookies.forEach((cookie) => {
+          cookieMap[cookie.name] = cookie.value;
+        });
+
+        console.log('cookieMap', cookieMap);
+
+        const headers = {
+          authority: 'www.swiggy.com',
+          'accept-language': 'en-GB,en;q=0.5',
+          cookie: `__SW=${cookieMap.__SW}; _device_id=${cookieMap._device_id}; fontsLoaded=${cookieMap.fontsLoaded}; _is_logged_in=${cookieMap._is_logged_in}; _session_tid=${cookieMap._session_tid}; userLocation={"lat":"13.145925","lng":"80.233508","address":"1st Main Rd, Pukraj Nagar, Madhavaram, Chennai, Tamil Nadu 600060, India","area":"Madhavaram","id":"17377130"}; _sid=${cookieMap._sid}; adl=true`,
+          'sec-fetch-dest': 'empty',
+          'sec-fetch-mode': 'cors',
+          'sec-fetch-site': 'same-origin',
+          'user-agent':
+            'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.82 Mobile Safari/537.36',
+          'sec-ch-ua-platform': 'Android',
+          'sec-ch-ua-mobile': '?1',
+        };
+
+        let orderId = '';
+        for (let i = 0; i < 100; i++) {
+          //Swiggy limits orders
+          console.log('order loop', i);
+          const {
+            data: {
+              data: { orders },
+            },
+          } = await axios.get('https://www.swiggy.com/dapi/order/all', {
+            params: {
+              order_id: orderId,
+            },
+            headers,
+          });
+
+          if (orders.length === 0) {
+            break;
+          }
+
+          orderId = orders.at(-1).order_id;
+
+          ordersCollection = [...ordersCollection, ...orders];
+        }
+
+        console.log('ordersCollection', ordersCollection);
+
+        const swiggyOrderMinimal = ordersCollection.map((order) => {
+          return {
+            details: {
+              resInfo: {
+                name: order.restaurant_area_name,
+              },
+              order: {
+                totalCost: order.order_total,
+                items: {
+                  dish: order.order_items.map((dish: any) => {
+                    return {
+                      itemName: dish.name,
+                      totalCost: Number(dish.final_price),
+                      quantity: Number(dish.quantity),
+                      tagSlugs: [dish.is_veg === '1' ? 'veg' : 'non-veg'],
+                    };
+                  }),
+                },
+              },
+              orderDate: dayjs(order.updated_at).format('MMM DD, YYYY'),
+            },
+          };
+        });
+
+        console.log('swiggyOrderMinimal', swiggyOrderMinimal);
+
+        chrome.storage.local.set(
+          {
+            swiggyOrders: JSON.stringify(swiggyOrderMinimal),
+            reportGeneratedOn: new Date().toISOString(),
+          },
+          () => {
+            console.log('Report stored in chrome storage');
+          }
+        );
+      }
+    );
+  };
+
   const viewReport = () => {
     chrome.tabs.create({ url: 'newtab.html' });
   };
 
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
-      {isZomatoTab && !isLoading && (
+      {(isZomatoTab || isSwiggyTab) && !isLoading && (
         <div className="w-full h-full flex flex-col justify-center items-center">
           <p className="text-base px-10 text-white text-center">
             Please make sure you're logged in and then click the below button.
           </p>
 
           <div className="flex flex-col items-center space-y-2">
-            {!(dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59) && (
+            {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= 0 && (
               <button
                 className={`btn btn-md btn-primary mt-5 w-48`}
+                // onClick={generateSwiggyReport}
                 onClick={generateReport}
               >
                 Analyze Orders
               </button>
             )}
 
-            {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= -59 && (
+            {/* {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= 0 && (
               <div
                 className="tooltip"
                 data-tip="Click the view report button below to see your report. Please wait an hour since the last report generation to be able to analyze your orders again"
@@ -231,7 +361,7 @@ const Popup = () => {
                   Analyze Orders
                 </button>{' '}
               </div>
-            )}
+            )} */}
           </div>
 
           {isPreviousReportPresent && (
@@ -245,7 +375,7 @@ const Popup = () => {
         </div>
       )}
 
-      {!isZomatoTab && (
+      {/* {!isZomatoTab && (
         <div className="w-full flex flex-col justify-center px-4 h-full items-center">
           <p className="text-white text-center text-base">
             Please open{' '}
@@ -305,7 +435,7 @@ const Popup = () => {
             </a>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* <div>
         <div className="">

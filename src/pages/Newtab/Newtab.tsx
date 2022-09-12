@@ -19,15 +19,17 @@ const Newtab = () => {
 
   useEffect(() => {
     chrome.storage.local.get(
-      ['zomatoOrders', 'reportGeneratedOn'],
+      ['zomatoOrders', 'reportGeneratedOn', 'swiggyOrders'],
       (result) => {
         console.log(
           'Value currently is ',
           JSON.parse(result.zomatoOrders),
+          JSON.parse(result.swiggyOrders),
           result.reportGeneratedOn
         );
         if (result.zomatoOrders) {
-          setZomatoOrders(JSON.parse(result.zomatoOrders));
+          // setZomatoOrders(JSON.parse(result.zomatoOrders));
+          setZomatoOrders(JSON.parse(result.swiggyOrders));
         }
       }
     );

@@ -13,10 +13,10 @@
     "128": "icon-128.png"
   },
   "permissions": ["storage", "cookies", "unlimitedStorage", "activeTab"],
-  "host_permissions": ["*://*.zomato.com/"],
+  "host_permissions": ["*://*.zomato.com/", "*://*.swiggy.com/"],
   "content_scripts": [
     {
-      "matches": ["*://*.zomato.com/"],
+      "matches": ["*://*.zomato.com/", "*://*.swiggy.com/"],
       "js": ["contentScript.bundle.js"],
       "css": ["content.styles.css"]
     }
