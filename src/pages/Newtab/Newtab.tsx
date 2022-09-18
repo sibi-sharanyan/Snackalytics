@@ -7,8 +7,24 @@ import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
 
+export const orderApps = [
+  {
+    label: 'All',
+    value: -1,
+  },
+  {
+    label: 'Zomato',
+    value: 0,
+  },
+  {
+    label: 'Swiggy',
+    value: 1,
+  },
+];
+
 const Newtab = () => {
   const [onlineOrders, setOnlineOrders] = React.useState<OnlineOrder[]>([]);
+  const [allOrders, setAllOrders] = React.useState<OnlineOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
   const [totalCost, setTotalCost] = React.useState<string>('');
@@ -16,6 +32,7 @@ const Newtab = () => {
   const [items, setItems] = React.useState<Dish[]>([]);
   const [medianOrderCost, setMedianOrderCost] = React.useState<string>('');
   const [averageOrderCost, setAverageOrderCost] = React.useState<string>('');
+  const [selectedOrderApp, setSelectedOrderApp] = React.useState<number>(-1);
 
   useEffect(() => {
     chrome.storage.local.get(
@@ -45,10 +62,24 @@ const Newtab = () => {
             orderApp: OrderApp.Swiggy,
           })),
         ];
-        setOnlineOrders(allOrders);
+        setAllOrders(allOrders);
       }
     );
   }, []);
+
+  useEffect(() => {
+    if (selectedOrderApp === -1) {
+      setOnlineOrders(allOrders);
+    } else if (selectedOrderApp === 0) {
+      setOnlineOrders(
+        allOrders.filter((order) => order.orderApp === OrderApp.Zomato)
+      );
+    } else if (selectedOrderApp === 1) {
+      setOnlineOrders(
+        allOrders.filter((order) => order.orderApp === OrderApp.Swiggy)
+      );
+    }
+  }, [allOrders, selectedOrderApp]);
 
   useEffect(() => {
     calculateTotal();
@@ -123,6 +154,18 @@ const Newtab = () => {
       <div className="flex-col space-y-20 w-full h-full">
         <select
           className="select w-full max-w-xs mr-10 select-primary"
+          value={selectedOrderApp}
+          onChange={(e) => {
+            setSelectedOrderApp(Number(e.target.value));
+          }}
+        >
+          {orderApps.map((orderApp) => (
+            <option value={orderApp.value}>{orderApp.label}</option>
+          ))}
+        </select>
+
+        {/* <select
+          className="select w-full max-w-xs mr-10 select-primary"
           value={selectedHotel}
           onChange={(e) => {
             setSelectedHotel(e.target.value);
@@ -134,7 +177,7 @@ const Newtab = () => {
           {uniqueHotels.map((hotel) => (
             <option value={hotel}>{hotel}</option>
           ))}
-        </select>
+        </select> */}
         <div className="flex w-full">
           <div className="flex w-1/2">
             <div className="space-y-10 shadow-lg p-6">
