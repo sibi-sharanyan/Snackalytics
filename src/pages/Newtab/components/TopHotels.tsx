@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { Dish, IHighestOrder, ZomatoOrder } from '../../../types';
+import { Dish, IHighestOrder, OnlineOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
 import levenshtein from 'fast-levenshtein';
 
@@ -30,7 +30,7 @@ export default function TopHotels({
   items,
   uniqueHotels,
 }: {
-  onlineOrders: ZomatoOrder[];
+  onlineOrders: OnlineOrder[];
   items: Dish[];
   uniqueHotels: string[];
 }) {

@@ -1,14 +1,14 @@
 import currency from 'currency.js';
 import React, { useEffect } from 'react';
 import '../../assets/styles/tailwind.css';
-import { Dish, IHighestOrder, ZomatoOrder } from '../../types';
+import { Dish, IHighestOrder, OnlineOrder, OrderApp } from '../../types';
 import dayjs from 'dayjs';
 import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
 
 const Newtab = () => {
-  const [onlineOrders, setOnlineOrders] = React.useState<ZomatoOrder[]>([]);
+  const [onlineOrders, setOnlineOrders] = React.useState<OnlineOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
   const [totalCost, setTotalCost] = React.useState<string>('');
@@ -28,16 +28,24 @@ const Newtab = () => {
           result.reportGeneratedOn
         );
 
-        let zomatoOrders = JSON.parse(result.zomatoOrders || '[]');
-        let swiggyOrders = JSON.parse(result.swiggyOrders || '[]');
+        let zomatoOrders: OnlineOrder[] = JSON.parse(
+          result.zomatoOrders || '[]'
+        );
+        let swiggyOrders: OnlineOrder[] = JSON.parse(
+          result.swiggyOrders || '[]'
+        );
 
-        if (result.zomatoOrders) {
-          // setZomatoOrders(JSON.parse(result.zomatoOrders));
-          // setZomatoOrders(JSON.parse(result.swiggyOrders));
-
-          let allOrders = [...zomatoOrders, ...swiggyOrders];
-          setOnlineOrders(allOrders);
-        }
+        let allOrders = [
+          ...zomatoOrders.map((order) => ({
+            ...order,
+            orderApp: OrderApp.Zomato,
+          })),
+          ...swiggyOrders.map((order) => ({
+            ...order,
+            orderApp: OrderApp.Swiggy,
+          })),
+        ];
+        setOnlineOrders(allOrders);
       }
     );
   }, []);

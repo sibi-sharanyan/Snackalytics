@@ -7,13 +7,13 @@ import {
   ResponsiveContainer,
   Cell,
 } from 'recharts';
-import { Dish, ZomatoOrder } from '../../../types';
+import { Dish, OnlineOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
 
 export default function VegNonVegPieChart({
   onlineOrders,
 }: {
-  onlineOrders: ZomatoOrder[];
+  onlineOrders: OnlineOrder[];
 }) {
   const [selectedFilterType, setSelectedFilterType] = React.useState<number>(1);
 

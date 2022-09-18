@@ -10,7 +10,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from 'recharts';
-import { IHighestOrder, ZomatoOrder } from '../../../types';
+import { IHighestOrder, OnlineOrder } from '../../../types';
 
 const timeRanges = [
   {
@@ -45,7 +45,7 @@ export const filterTypes = [
 export default function OrderHistoryLineChart({
   onlineOrders,
 }: {
-  onlineOrders: ZomatoOrder[];
+  onlineOrders: OnlineOrder[];
 }) {
   const [chartData, setChartData] = React.useState<
     { time: string; value: number }[]

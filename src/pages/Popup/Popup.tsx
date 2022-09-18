@@ -4,7 +4,7 @@ import '../../assets/styles/tailwind.css';
 import axios from 'axios';
 import pLimit from 'p-limit';
 import currency from 'currency.js';
-import { ZomatoOrder } from '../../types';
+import { OnlineOrder } from '../../types';
 import { Circle } from 'rc-progress';
 
 import {
@@ -151,7 +151,7 @@ const Popup = () => {
 
           await Promise.all(requests);
 
-          const zomatoOrders: ZomatoOrder[] = [];
+          const zomatoOrders: OnlineOrder[] = [];
 
           const orderRequests = orderHashIds.map((hashId) => {
             return limit(async () => {

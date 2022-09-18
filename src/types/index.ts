@@ -1,6 +1,12 @@
-export interface ZomatoOrder {
+export enum OrderApp {
+    Zomato,
+    Swiggy,
+}
+
+export interface OnlineOrder {
     title: string;
     details: Details;
+    orderApp: OrderApp;
 }
 
 interface Details {
