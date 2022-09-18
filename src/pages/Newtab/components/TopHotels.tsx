@@ -26,11 +26,11 @@ export const entityTypes = [
 ];
 
 export default function TopHotels({
-  zomatoOrders,
+  onlineOrders,
   items,
   uniqueHotels,
 }: {
-  zomatoOrders: ZomatoOrder[];
+  onlineOrders: ZomatoOrder[];
   items: Dish[];
   uniqueHotels: string[];
 }) {
@@ -69,7 +69,7 @@ export default function TopHotels({
       } else {
         const mostOrderedHotels = uniqueHotels
           .map((hotel) => {
-            const orders = zomatoOrders.filter(
+            const orders = onlineOrders.filter(
               (order) => order.details.resInfo.name === hotel
             );
             return {
@@ -101,7 +101,7 @@ export default function TopHotels({
       } else {
         const mostOrderedHotels = uniqueHotels
           .map((hotel) => {
-            const totalCost = zomatoOrders
+            const totalCost = onlineOrders
               .filter((order) => order.details.resInfo.name === hotel)
               .reduce((acc, order) => acc + order.details.order.totalCost, 0);
             return {
@@ -116,7 +116,7 @@ export default function TopHotels({
       }
     }
   }, [
-    zomatoOrders,
+    onlineOrders,
     uniqueHotels,
     selectedFilterType,
     selectedEntityType,

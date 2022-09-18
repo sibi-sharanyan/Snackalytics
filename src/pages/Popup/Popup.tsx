@@ -62,7 +62,9 @@ const Popup = () => {
     );
   }, []);
 
-  const generateReport = () => {
+  const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
+  const generateZomatoReport = () => {
     console.log('generateReport', chrome);
 
     chrome.cookies.getAll(
@@ -109,8 +111,6 @@ const Popup = () => {
             headers,
           });
 
-          console.log('ORDER, count totalPages', orders, count, totalPages);
-
           setTotalRequestsRequired(count + totalPages);
 
           let finalTotalCost = 0;
@@ -118,6 +118,7 @@ const Popup = () => {
 
           const requests = Array.from(Array(totalPages).keys()).map((page) => {
             return limit(async () => {
+              // await delay(2000);
               const {
                 data: {
                   entities: { ORDER: orders },
@@ -140,26 +141,15 @@ const Popup = () => {
                 const order = orders[key];
                 const { totalCost, hashId } = order;
 
-                console.log(
-                  'hashId, totalCost',
-                  hashId,
-                  totalCost,
-                  currency(totalCost).value
-                );
-
                 pageTotalCost += currency(totalCost).value;
                 orderHashIds.push(hashId);
               }
 
               finalTotalCost += pageTotalCost;
-
-              console.log('orders', orders, page, pageTotalCost);
             });
           });
 
           await Promise.all(requests);
-
-          console.log('totalCost', finalTotalCost);
 
           const zomatoOrders: ZomatoOrder[] = [];
 
@@ -176,8 +166,6 @@ const Popup = () => {
               );
 
               setRequestsMade((prev) => prev + 1);
-
-              console.log('orderData', orderData);
 
               zomatoOrders.push(orderData);
             });
@@ -197,7 +185,7 @@ const Popup = () => {
                 order: {
                   totalCost: order.details.order.totalCost,
                   items: {
-                    dish: order.details.order.items.dish.map((dish) => {
+                    dish: order.details.order.items?.dish?.map((dish) => {
                       return {
                         itemName: dish.itemName,
                         totalCost: dish.totalCost,
@@ -212,7 +200,7 @@ const Popup = () => {
             };
           });
 
-          console.log('zomatoOrderMinimal', zomatoOrderMinimal);
+          console.log('zomatoOrderMinimal', zomatoOrderMinimal, zomatoOrders);
 
           chrome.storage.local.set(
             {
@@ -292,7 +280,7 @@ const Popup = () => {
           return {
             details: {
               resInfo: {
-                name: order.restaurant_area_name,
+                name: order.restaurant_name,
               },
               order: {
                 totalCost: order.order_total,
@@ -331,6 +319,14 @@ const Popup = () => {
     chrome.tabs.create({ url: 'newtab.html' });
   };
 
+  const generateReport = () => {
+    if (isZomatoTab) {
+      generateZomatoReport();
+    } else if (isSwiggyTab) {
+      generateSwiggyReport();
+    }
+  };
+
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
       {(isZomatoTab || isSwiggyTab) && !isLoading && (
@@ -343,7 +339,6 @@ const Popup = () => {
             {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= 0 && (
               <button
                 className={`btn btn-md btn-primary mt-5 w-48`}
-                // onClick={generateSwiggyReport}
                 onClick={generateReport}
               >
                 Analyze Orders

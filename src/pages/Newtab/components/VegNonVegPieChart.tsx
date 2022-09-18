@@ -11,9 +11,9 @@ import { Dish, ZomatoOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
 
 export default function VegNonVegPieChart({
-  zomatoOrders,
+  onlineOrders,
 }: {
-  zomatoOrders: ZomatoOrder[];
+  onlineOrders: ZomatoOrder[];
 }) {
   const [selectedFilterType, setSelectedFilterType] = React.useState<number>(1);
 
@@ -24,7 +24,7 @@ export default function VegNonVegPieChart({
   useEffect(() => {
     let allItems: Dish[] = [];
 
-    zomatoOrders.forEach((order) => {
+    onlineOrders.forEach((order) => {
       order.details.order.items.dish?.forEach((dish) => {
         allItems.push(dish);
       });
@@ -71,7 +71,7 @@ export default function VegNonVegPieChart({
         color: '#706db5',
       },
     ]);
-  }, [zomatoOrders, selectedFilterType]);
+  }, [onlineOrders, selectedFilterType]);
 
   return (
     <div className="flex flex-col w-full items-center">

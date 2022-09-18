@@ -8,7 +8,7 @@ import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
 
 const Newtab = () => {
-  const [zomatoOrders, setZomatoOrders] = React.useState<ZomatoOrder[]>([]);
+  const [onlineOrders, setOnlineOrders] = React.useState<ZomatoOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
   const [totalCost, setTotalCost] = React.useState<string>('');
@@ -27,9 +27,16 @@ const Newtab = () => {
           JSON.parse(result.swiggyOrders),
           result.reportGeneratedOn
         );
+
+        let zomatoOrders = JSON.parse(result.zomatoOrders || '[]');
+        let swiggyOrders = JSON.parse(result.swiggyOrders || '[]');
+
         if (result.zomatoOrders) {
           // setZomatoOrders(JSON.parse(result.zomatoOrders));
-          setZomatoOrders(JSON.parse(result.swiggyOrders));
+          // setZomatoOrders(JSON.parse(result.swiggyOrders));
+
+          let allOrders = [...zomatoOrders, ...swiggyOrders];
+          setOnlineOrders(allOrders);
         }
       }
     );
@@ -39,13 +46,13 @@ const Newtab = () => {
     calculateTotal();
 
     const allItems: Dish[] = [];
-    zomatoOrders.forEach((order) => {
+    onlineOrders.forEach((order) => {
       order.details.order.items.dish?.forEach((dish) => {
         allItems.push(dish);
       });
     });
 
-    const orderCosts = zomatoOrders.map(
+    const orderCosts = onlineOrders.map(
       (order) => order.details.order.totalCost
     );
     const medianOrderCost = orderCosts.sort((a, b) => a - b)[
@@ -59,19 +66,19 @@ const Newtab = () => {
     );
 
     setItems(allItems);
-  }, [zomatoOrders]);
+  }, [onlineOrders]);
 
   useEffect(() => {
-    const uniqueHotels = zomatoOrders
+    const uniqueHotels = onlineOrders
       .map((order) => order.details.resInfo.name)
       .filter((value, index, self) => self.indexOf(value) === index);
     setUniqueHotels(uniqueHotels);
-  }, [zomatoOrders]);
+  }, [onlineOrders]);
 
   const calculateTotal = (hotel?: string) => {
     let finalTotalPrice = 0;
 
-    zomatoOrders.forEach((order) => {
+    onlineOrders.forEach((order) => {
       const { details } = order;
 
       if (!hotel) {
@@ -90,12 +97,12 @@ const Newtab = () => {
     );
 
     setAverageOrderCost(
-      currency(finalTotalPrice / zomatoOrders.length).format({
+      currency(finalTotalPrice / onlineOrders.length).format({
         symbol: '₹',
       })
     );
 
-    setOrderCount(zomatoOrders.length);
+    setOrderCount(onlineOrders.length);
   };
 
   return (
@@ -162,13 +169,13 @@ const Newtab = () => {
             </div>
           </div>
           <div className="w-1/2">
-            <VegNonVegPieChart zomatoOrders={zomatoOrders} />
+            <VegNonVegPieChart onlineOrders={onlineOrders} />
           </div>
         </div>
 
-        <OrderHistoryLineChart zomatoOrders={zomatoOrders} />
+        <OrderHistoryLineChart onlineOrders={onlineOrders} />
         <TopHotels
-          zomatoOrders={zomatoOrders}
+          onlineOrders={onlineOrders}
           items={items}
           uniqueHotels={uniqueHotels}
         />

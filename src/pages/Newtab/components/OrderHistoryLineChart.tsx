@@ -43,9 +43,9 @@ export const filterTypes = [
 ];
 
 export default function OrderHistoryLineChart({
-  zomatoOrders,
+  onlineOrders,
 }: {
-  zomatoOrders: ZomatoOrder[];
+  onlineOrders: ZomatoOrder[];
 }) {
   const [chartData, setChartData] = React.useState<
     { time: string; value: number }[]
@@ -65,7 +65,7 @@ export default function OrderHistoryLineChart({
       console.log('last30Days', last30Days);
 
       const pastOrdersData = last30Days.map((day) => {
-        const orders = zomatoOrders.filter((order) => {
+        const orders = onlineOrders.filter((order) => {
           return (
             dayjs(order.details.orderDate.split('at')[0]).format(
               'DD MMM YYYY'
@@ -89,7 +89,7 @@ export default function OrderHistoryLineChart({
 
       setChartData(pastOrdersData.reverse());
     } else if (selectedTimeRange === 4) {
-      const oldestOrder = zomatoOrders.sort((a, b) => {
+      const oldestOrder = onlineOrders.sort((a, b) => {
         return (
           dayjs(a.details.orderDate.split('at')[0]).unix() -
           dayjs(b.details.orderDate.split('at')[0]).unix()
@@ -109,7 +109,7 @@ export default function OrderHistoryLineChart({
       for (let i = 0; i < months; i++) {
         const month = oldestDate.add(i, 'month').format('MMM YYYY');
         console.log('month', month);
-        const orders = zomatoOrders.filter((order) => {
+        const orders = onlineOrders.filter((order) => {
           return (
             dayjs(order.details.orderDate.split('at')[0]).format('MMM YYYY') ===
             month
@@ -144,7 +144,7 @@ export default function OrderHistoryLineChart({
       );
 
       const pastOrdersData = last12Months.map((month) => {
-        const orders = zomatoOrders.filter((order) => {
+        const orders = onlineOrders.filter((order) => {
           return (
             dayjs(order.details.orderDate.split('at')[0]).format('MMM YYYY') ===
             month
@@ -167,7 +167,7 @@ export default function OrderHistoryLineChart({
 
       setChartData(pastOrdersData.reverse());
     }
-  }, [zomatoOrders, selectedTimeRange, selectedFilterType]);
+  }, [onlineOrders, selectedTimeRange, selectedFilterType]);
 
   return (
     <div className="">
