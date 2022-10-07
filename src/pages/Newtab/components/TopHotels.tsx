@@ -162,7 +162,7 @@ export default function TopHotels({
             name: x.name.length > 20 ? x.name.slice(0, 20) + '...' : x.name,
           }))}
           layout="vertical"
-          margin={{ top: 0, right: 40, left: 40, bottom: 20 }}
+          margin={{ left: 40 }}
           barCategoryGap="20%"
           barGap={2}
           maxBarSize={10}
@@ -174,8 +174,6 @@ export default function TopHotels({
             type="category"
             axisLine={false}
             tickLine={false}
-            width={40}
-            minTickGap={0}
           />
           <Tooltip />
           <Bar dataKey="value" fill="#8884d8" minPointSize={2} barSize={32} />
