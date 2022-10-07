@@ -9,6 +9,7 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  Text,
 } from 'recharts';
 import { Dish, IHighestOrder, OnlineOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
@@ -124,7 +125,7 @@ export default function TopHotels({
   ]);
 
   return (
-    <div className="">
+    <div className="py-20">
       <div className="flex ">
         <select
           className="select w-full max-w-xs mr-10 mb-10 select-primary"
@@ -150,22 +151,34 @@ export default function TopHotels({
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={400}>
+      <ResponsiveContainer
+        width="100%"
+        height={50 * chartData.length}
+        debounce={50}
+      >
         <BarChart
-          width={500}
-          data={chartData}
-          margin={{
-            top: 5,
-            right: 30,
-            left: 20,
-            bottom: 5,
-          }}
-          barSize={40}
+          data={chartData.map((x) => ({
+            ...x,
+            name: x.name.length > 20 ? x.name.slice(0, 20) + '...' : x.name,
+          }))}
+          layout="vertical"
+          margin={{ top: 0, right: 40, left: 40, bottom: 20 }}
+          barCategoryGap="20%"
+          barGap={2}
+          maxBarSize={10}
         >
-          <XAxis dataKey="name" />
-          <YAxis dataKey="value" />
+          <XAxis hide axisLine={false} type="number" dataKey="value" />
+          <YAxis
+            yAxisId={0}
+            dataKey={'name'}
+            type="category"
+            axisLine={false}
+            tickLine={false}
+            width={40}
+            minTickGap={0}
+          />
           <Tooltip />
-          <Bar dataKey="value" fill="#8884d8" />
+          <Bar dataKey="value" fill="#8884d8" minPointSize={2} barSize={32} />
         </BarChart>
       </ResponsiveContainer>
     </div>
