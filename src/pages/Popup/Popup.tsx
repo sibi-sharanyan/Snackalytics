@@ -370,7 +370,7 @@ const Popup = () => {
         </div>
       )}
 
-      {/* {!isZomatoTab && (
+      {!isZomatoTab && !isSwiggyTab && (
         <div className="w-full flex flex-col justify-center px-4 h-full items-center">
           <p className="text-white text-center text-base">
             Please open{' '}
@@ -380,7 +380,16 @@ const Popup = () => {
               className="text-blue-300 underline cursor-pointer"
               rel="noreferrer"
             >
-              <code>https://www.zomato.com</code>
+              <code>Zomato</code>
+            </a>{' '}
+            or{' '}
+            <a
+              href="https://www.swiggy.com"
+              target="_blank"
+              className="text-blue-300 underline cursor-pointer"
+              rel="noreferrer"
+            >
+              <code>Swiggy</code>
             </a>{' '}
             in a new tab, login to your account and click on the extension icon.
           </p>
@@ -430,20 +439,7 @@ const Popup = () => {
             </a>
           </div>
         </div>
-      )} */}
-
-      {/* <div>
-        <div className="">
-          <div className="">
-            Percentage{' '}
-            {Math.round((requestsMade / totalRequestsRequired) * 100)}{' '}
-          </div>
-
-          <div className="">totalRequestsRequired: {totalRequestsRequired}</div>
-
-          <div className="">requestsMade: {requestsMade}</div>
-        </div>
-      </div> */}
+      )}
 
       {isLoading && (
         <>
