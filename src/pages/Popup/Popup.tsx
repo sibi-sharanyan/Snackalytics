@@ -17,7 +17,7 @@ import {
 import dayjs from 'dayjs';
 
 const limit = pLimit(10);
-
+const ZOMATO_ORDER_QUERY_LIMIT = 500;
 const Popup = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isPreviousReportPresent, setIsPreviousReportPresent] =
@@ -153,23 +153,27 @@ const Popup = () => {
 
           const zomatoOrders: OnlineOrder[] = [];
 
-          const orderRequests = orderHashIds.map((hashId) => {
-            return limit(async () => {
-              const { data: orderData } = await axios.get(
-                'https://www.zomato.com/webroutes/order/details',
-                {
-                  params: {
-                    hashId,
-                  },
-                  headers,
-                }
-              );
+          console.log('orderHashIds', orderHashIds);
 
-              setRequestsMade((prev) => prev + 1);
+          const orderRequests = orderHashIds
+            .slice(0, ZOMATO_ORDER_QUERY_LIMIT)
+            .map((hashId) => {
+              return limit(async () => {
+                const { data: orderData } = await axios.get(
+                  'https://www.zomato.com/webroutes/order/details',
+                  {
+                    params: {
+                      hashId,
+                    },
+                    headers,
+                  }
+                );
 
-              zomatoOrders.push(orderData);
+                setRequestsMade((prev) => prev + 1);
+
+                zomatoOrders.push(orderData);
+              });
             });
-          });
 
           await Promise.all(orderRequests);
 
