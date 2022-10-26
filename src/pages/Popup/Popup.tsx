@@ -353,7 +353,7 @@ const Popup = () => {
   };
 
   const isRecentReportAvailable =
-    dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 60;
+    dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 30;
 
   // const isRecentReportAvailable = false;
 
