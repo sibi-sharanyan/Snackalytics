@@ -31,6 +31,7 @@ const Popup = () => {
 
   const [isZomatoTab, setIsZomatoTab] = useState<boolean>(false);
   const [isSwiggyTab, setIsSwiggyTab] = useState<boolean>(false);
+  const [chromeStorageUpdates, setChromeStorageUpdates] = useState(0);
 
   useEffect(() => {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
@@ -62,7 +63,7 @@ const Popup = () => {
         setIsPreviousReportPresent(true);
       }
     });
-  }, [isZomatoTab, isSwiggyTab]);
+  }, [isZomatoTab, isSwiggyTab, chromeStorageUpdates]);
 
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -217,10 +218,10 @@ const Popup = () => {
             },
             () => {
               console.log('Report stored in chrome storage');
+              setChromeStorageUpdates((prev) => prev + 1);
+              setIsLoading(false);
             }
           );
-
-          setIsLoading(false);
         } catch (err) {
           console.log('cookies', cookies);
           setIsLoading(false);
@@ -244,7 +245,7 @@ const Popup = () => {
         });
 
         console.log('cookieMap', cookieMap);
-
+        setIsLoading(true);
         setTotalRequestsRequired(10);
 
         const headers = {
@@ -266,7 +267,7 @@ const Popup = () => {
           console.log('order loop', i);
           const {
             data: {
-              data: { orders },
+              data: { orders, total_orders },
             },
           } = await axios.get('https://www.swiggy.com/dapi/order/all', {
             params: {
@@ -274,6 +275,10 @@ const Popup = () => {
             },
             headers,
           });
+
+          if (i === 0) {
+            setTotalRequestsRequired(total_orders / 10);
+          }
 
           if (orders.length === 0) {
             break;
@@ -322,6 +327,8 @@ const Popup = () => {
           },
           () => {
             console.log('Report stored in chrome storage');
+            setChromeStorageUpdates((prev) => prev + 1);
+            setIsLoading(false);
           }
         );
       }
@@ -343,13 +350,14 @@ const Popup = () => {
   const isRecentReportAvailable =
     dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 60;
 
+  // const isRecentReportAvailable = false;
+
   // console.log(
   //   'reportGeneratedOn',
   //   reportGeneratedOn,
   //   dayjs().diff(dayjs(reportGeneratedOn), 'minute'),
   //   dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 60
   // );
-  // const isRecentReportAvailable = false;
 
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
