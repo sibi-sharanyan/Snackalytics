@@ -122,33 +122,38 @@ const Popup = () => {
           const requests = Array.from(Array(totalPages).keys()).map((page) => {
             return limit(async () => {
               // await delay(2000);
-              const {
-                data: {
-                  entities: { ORDER: orders },
-                },
-              } = await axios.get(
-                'https://www.zomato.com/webroutes/user/orders',
-                {
-                  params: {
-                    page: page + 1,
+              try {
+                const {
+                  data: {
+                    entities: { ORDER: orders },
                   },
-                  headers,
+                } = await axios.get(
+                  'https://www.zomato.com/webroutes/user/orders',
+                  {
+                    params: {
+                      page: page + 1,
+                    },
+                    headers,
+                  }
+                );
+
+                setRequestsMade((prev) => prev + 1);
+
+                let pageTotalCost = 0;
+
+                for (let key in orders) {
+                  const order = orders[key];
+                  const { totalCost, hashId } = order;
+
+                  pageTotalCost += currency(totalCost).value;
+                  orderHashIds.push(hashId);
                 }
-              );
 
-              setRequestsMade((prev) => prev + 1);
-
-              let pageTotalCost = 0;
-
-              for (let key in orders) {
-                const order = orders[key];
-                const { totalCost, hashId } = order;
-
-                pageTotalCost += currency(totalCost).value;
-                orderHashIds.push(hashId);
+                finalTotalCost += pageTotalCost;
+              } catch (error) {
+                // Break the loop if any error occurs
+                console.log('error', error);
               }
-
-              finalTotalCost += pageTotalCost;
             });
           });
 
