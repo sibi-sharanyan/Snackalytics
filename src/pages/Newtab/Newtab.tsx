@@ -35,36 +35,28 @@ const Newtab = () => {
   const [selectedOrderApp, setSelectedOrderApp] = React.useState<number>(-1);
 
   useEffect(() => {
-    chrome.storage.local.get(
-      ['zomatoOrders', 'reportGeneratedOn', 'swiggyOrders'],
-      (result) => {
-        console.log(
-          'Value currently is ',
-          JSON.parse(result.zomatoOrders),
-          JSON.parse(result.swiggyOrders),
-          result.reportGeneratedOn
-        );
+    chrome.storage.local.get(['zomato', 'swiggy'], (result) => {
+      console.log('Value currently is ', result);
 
-        let zomatoOrders: OnlineOrder[] = JSON.parse(
-          result.zomatoOrders || '[]'
-        );
-        let swiggyOrders: OnlineOrder[] = JSON.parse(
-          result.swiggyOrders || '[]'
-        );
+      let zomatoOrders: OnlineOrder[] = JSON.parse(
+        result?.zomato?.orders || '[]'
+      );
+      let swiggyOrders: OnlineOrder[] = JSON.parse(
+        result?.swiggy?.orders || '[]'
+      );
 
-        let allOrders = [
-          ...zomatoOrders.map((order) => ({
-            ...order,
-            orderApp: OrderApp.Zomato,
-          })),
-          ...swiggyOrders.map((order) => ({
-            ...order,
-            orderApp: OrderApp.Swiggy,
-          })),
-        ];
-        setAllOrders(allOrders);
-      }
-    );
+      let allOrders = [
+        ...zomatoOrders.map((order) => ({
+          ...order,
+          orderApp: OrderApp.Zomato,
+        })),
+        ...swiggyOrders.map((order) => ({
+          ...order,
+          orderApp: OrderApp.Swiggy,
+        })),
+      ];
+      setAllOrders(allOrders);
+    });
   }, []);
 
   useEffect(() => {

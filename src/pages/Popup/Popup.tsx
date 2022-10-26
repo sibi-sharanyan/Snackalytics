@@ -49,18 +49,20 @@ const Popup = () => {
         setIsSwiggyTab(true);
       }
     });
-
-    chrome.storage.local.get(
-      ['zomatoOrders', 'reportGeneratedOn'],
-      (result) => {
-        console.log('Value currently is ', result.reportGeneratedOn);
-        if (result.zomatoOrders) {
-          setReportGeneratedOn(result.reportGeneratedOn);
-          setIsPreviousReportPresent(true);
-        }
-      }
-    );
   }, []);
+
+  useEffect(() => {
+    chrome.storage.local.get([isZomatoTab ? 'zomato' : 'swiggy'], (result) => {
+      console.log('Value currently is ', result.reportGeneratedOn);
+      if (isZomatoTab && result.zomato) {
+        setReportGeneratedOn(result.zomato.reportGeneratedOn);
+        setIsPreviousReportPresent(true);
+      } else if (isSwiggyTab && result.swiggy) {
+        setReportGeneratedOn(result.swiggy.reportGeneratedOn);
+        setIsPreviousReportPresent(true);
+      }
+    });
+  }, [isZomatoTab, isSwiggyTab]);
 
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
@@ -208,8 +210,10 @@ const Popup = () => {
 
           chrome.storage.local.set(
             {
-              zomatoOrders: JSON.stringify(zomatoOrderMinimal),
-              reportGeneratedOn: new Date().toISOString(),
+              zomato: {
+                orders: JSON.stringify(zomatoOrderMinimal),
+                reportGeneratedOn: new Date().toISOString(),
+              },
             },
             () => {
               console.log('Report stored in chrome storage');
@@ -240,6 +244,8 @@ const Popup = () => {
         });
 
         console.log('cookieMap', cookieMap);
+
+        setTotalRequestsRequired(10);
 
         const headers = {
           authority: 'www.swiggy.com',
@@ -276,6 +282,7 @@ const Popup = () => {
           orderId = orders.at(-1).order_id;
 
           ordersCollection = [...ordersCollection, ...orders];
+          setRequestsMade((prev) => prev + 1);
         }
 
         console.log('ordersCollection', ordersCollection);
@@ -308,8 +315,10 @@ const Popup = () => {
 
         chrome.storage.local.set(
           {
-            swiggyOrders: JSON.stringify(swiggyOrderMinimal),
-            reportGeneratedOn: new Date().toISOString(),
+            swiggy: {
+              orders: JSON.stringify(swiggyOrderMinimal),
+              reportGeneratedOn: new Date().toISOString(),
+            },
           },
           () => {
             console.log('Report stored in chrome storage');
@@ -331,6 +340,17 @@ const Popup = () => {
     }
   };
 
+  const isRecentReportAvailable =
+    dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 60;
+
+  // console.log(
+  //   'reportGeneratedOn',
+  //   reportGeneratedOn,
+  //   dayjs().diff(dayjs(reportGeneratedOn), 'minute'),
+  //   dayjs().diff(dayjs(reportGeneratedOn), 'minute') <= 60
+  // );
+  // const isRecentReportAvailable = false;
+
   return (
     <div className="bg-gray-600 h-screen flex flex-col items-center space-y-10 w-full">
       {(isZomatoTab || isSwiggyTab) && !isLoading && (
@@ -340,27 +360,24 @@ const Popup = () => {
           </p>
 
           <div className="flex flex-col items-center space-y-2">
-            {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= 0 && (
+            <div
+              {...(isRecentReportAvailable
+                ? {
+                    'data-tip':
+                      'Click the view report button below to see your report. You can analyze your orders again after an hour',
+                    className: 'tooltip',
+                  }
+                : {})}
+            >
               <button
-                className={`btn btn-md btn-primary mt-5 w-48`}
+                className={`btn btn-md btn-primary mt-5 w-48 ${
+                  isRecentReportAvailable ? 'btn-disabled' : ''
+                }`}
                 onClick={generateReport}
               >
                 Analyze Orders
-              </button>
-            )}
-
-            {/* {dayjs(reportGeneratedOn).diff(dayjs(), 'minute') <= 0 && (
-              <div
-                className="tooltip"
-                data-tip="Click the view report button below to see your report. Please wait an hour since the last report generation to be able to analyze your orders again"
-              >
-                <button
-                  className={`btn btn-md btn-primary mt-5 w-48 btn-disabled`}
-                >
-                  Analyze Orders
-                </button>{' '}
-              </div>
-            )} */}
+              </button>{' '}
+            </div>
           </div>
 
           {isPreviousReportPresent && (
