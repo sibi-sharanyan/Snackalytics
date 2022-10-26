@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Zomato report",
-  "description": "Analyse your zomato data",
+  "name": "Snackalytics",
+  "description": "Zomato and Swiggy order analytics",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "action": {
