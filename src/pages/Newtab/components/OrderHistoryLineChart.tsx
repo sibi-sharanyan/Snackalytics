@@ -58,7 +58,7 @@ export default function OrderHistoryLineChart({
     if (selectedTimeRange === 1) {
       const last30Days = Array.from({ length: 30 }, (_, i) => {
         const date = new Date();
-        date.setDate(date.getMonth() - i);
+        date.setDate(date.getDate() - i);
         return dayjs(date).format('DD MMM YYYY');
       });
 
@@ -138,6 +138,7 @@ export default function OrderHistoryLineChart({
         { length: selectedTimeRange === 2 ? 12 : 24 },
         (_, i) => {
           const date = new Date();
+          date.setDate(1);
           date.setMonth(date.getMonth() - i);
           return dayjs(date).format('MMM YYYY');
         }
