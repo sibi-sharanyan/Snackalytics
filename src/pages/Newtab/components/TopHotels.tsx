@@ -14,6 +14,7 @@ import {
 import { Dish, IHighestOrder, OnlineOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
 import levenshtein from 'fast-levenshtein';
+import currency from 'currency.js';
 
 export const entityTypes = [
   {
@@ -25,6 +26,39 @@ export const entityTypes = [
     value: 2,
   },
 ];
+
+const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
+  console.log(
+    'active, payload, label',
+    active,
+    payload,
+    label,
+    selectedFilterType
+  );
+  if (active && payload && payload.length) {
+    if (selectedFilterType === 1) {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{label} </p>
+          <p className="text-xl">
+            {currency(payload[0].value, {
+              symbol: '₹',
+            }).format()}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{label} </p>
+          <p className="text-xl">{payload[0].value} orders</p>
+        </div>
+      );
+    }
+  }
+
+  return null;
+};
 
 export default function TopHotels({
   onlineOrders,
@@ -175,7 +209,9 @@ export default function TopHotels({
             axisLine={false}
             tickLine={false}
           />
-          <Tooltip />
+          <Tooltip
+            content={<CustomTooltip selectedFilterType={selectedFilterType} />}
+          />
           <Bar dataKey="value" fill="#8884d8" minPointSize={2} barSize={32} />
         </BarChart>
       </ResponsiveContainer>
