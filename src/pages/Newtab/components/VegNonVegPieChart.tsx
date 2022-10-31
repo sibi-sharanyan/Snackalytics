@@ -1,3 +1,4 @@
+import currency from 'currency.js';
 import React, { PureComponent, useEffect } from 'react';
 import {
   PieChart,
@@ -9,6 +10,32 @@ import {
 } from 'recharts';
 import { Dish, OnlineOrder } from '../../../types';
 import { filterTypes } from './OrderHistoryLineChart';
+
+const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
+  if (active && payload && payload.length) {
+    if (selectedFilterType === 1) {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{payload[0].name} </p>
+          <p className="text-xl">
+            {currency(payload[0].value, {
+              symbol: '₹',
+            }).format()}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{payload[0].name} </p>
+          <p className="text-xl">{payload[0].value} orders</p>
+        </div>
+      );
+    }
+  }
+
+  return null;
+};
 
 export default function VegNonVegPieChart({
   onlineOrders,
@@ -94,7 +121,9 @@ export default function VegNonVegPieChart({
               <Cell key={`cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          <Tooltip />
+          <Tooltip
+            content={<CustomTooltip selectedFilterType={selectedFilterType} />}
+          />
         </PieChart>
       </ResponsiveContainer>
     </div>
