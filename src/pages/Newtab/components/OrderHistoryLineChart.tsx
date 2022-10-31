@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import React, { PureComponent, useEffect } from 'react';
+import currency from 'currency.js';
 import {
   LineChart,
   Line,
@@ -41,6 +42,39 @@ export const filterTypes = [
     value: 2,
   },
 ];
+
+const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
+  console.log(
+    'active, payload, label',
+    active,
+    payload,
+    label,
+    selectedFilterType
+  );
+  if (active && payload && payload.length) {
+    if (selectedFilterType === 1) {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{dayjs(label).format('MMM DD, YYYY')} </p>
+          <p className="text-xl">
+            {currency(payload[0].value, {
+              symbol: '₹',
+            }).format()}
+          </p>
+        </div>
+      );
+    } else {
+      return (
+        <div className="bg-purple-500 border-none  text-white px-2 py-1">
+          <p className="text-md">{dayjs(label).format('MMM DD, YYYY')} </p>
+          <p className="text-xl">{payload[0].value} orders</p>
+        </div>
+      );
+    }
+  }
+
+  return null;
+};
 
 export default function OrderHistoryLineChart({
   onlineOrders,
@@ -207,7 +241,9 @@ export default function OrderHistoryLineChart({
           />
           <XAxis dataKey="time" />
           <YAxis dataKey="value" />
-          <Tooltip />
+          <Tooltip
+            content={<CustomTooltip selectedFilterType={selectedFilterType} />}
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>
