@@ -369,7 +369,8 @@ const Popup = () => {
       {(isZomatoTab || isSwiggyTab) && !isLoading && (
         <div className="w-full h-full flex flex-col justify-center items-center">
           <p className="text-base px-10 text-white text-center">
-            Please make sure you're logged in and then click the below button.
+            Please make sure you're logged in to your account and then click the
+            below button.
           </p>
 
           <div className="flex flex-col items-center space-y-2">
