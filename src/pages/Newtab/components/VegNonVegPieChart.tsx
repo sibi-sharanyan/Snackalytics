@@ -56,18 +56,18 @@ export default function VegNonVegPieChart({
     setChartData([
       {
         name: 'Veg',
-        value: selectedFilterType === 2 ? vegItemsTotalCost : vegItems.length,
+        value: selectedFilterType === 1 ? vegItemsTotalCost : vegItems.length,
         color: '#8884d8',
       },
       {
         name: 'Non-Veg',
         value:
-          selectedFilterType === 2 ? nonVegItemsTotalCost : nonVegItems.length,
+          selectedFilterType === 1 ? nonVegItemsTotalCost : nonVegItems.length,
         color: '#43416e',
       },
       {
         name: 'Egg',
-        value: selectedFilterType === 2 ? eggItemsTotalCost : eggItems.length,
+        value: selectedFilterType === 1 ? eggItemsTotalCost : eggItems.length,
         color: '#706db5',
       },
     ]);

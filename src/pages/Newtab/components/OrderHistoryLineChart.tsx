@@ -33,11 +33,11 @@ const timeRanges = [
 
 export const filterTypes = [
   {
-    label: 'By Orders Placed',
+    label: 'By Money Spent',
     value: 1,
   },
   {
-    label: 'By Money Spent',
+    label: 'By Orders Placed',
     value: 2,
   },
 ];
@@ -74,7 +74,7 @@ export default function OrderHistoryLineChart({
         });
 
         const finalValue =
-          selectedFilterType === 1
+          selectedFilterType === 2
             ? orders.length
             : orders.reduce(
                 (acc, order) => acc + order.details.order.totalCost,
@@ -117,7 +117,7 @@ export default function OrderHistoryLineChart({
         });
 
         const finalValue =
-          selectedFilterType === 1
+          selectedFilterType === 2
             ? orders.length
             : orders.reduce(
                 (acc, order) => acc + order.details.order.totalCost,
@@ -153,7 +153,7 @@ export default function OrderHistoryLineChart({
         });
 
         const finalValue =
-          selectedFilterType === 1
+          selectedFilterType === 2
             ? orders.length
             : orders.reduce(
                 (acc, order) => acc + order.details.order.totalCost,

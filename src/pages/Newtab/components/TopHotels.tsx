@@ -53,7 +53,7 @@ export default function TopHotels({
 
     setUniqueItems(_uniqueItems);
 
-    if (selectedFilterType === 1) {
+    if (selectedFilterType === 2) {
       if (selectedEntityType === 2) {
         const mostOrderedFoods = _uniqueItems
           .map((item) => {
@@ -83,7 +83,7 @@ export default function TopHotels({
 
         setChartData(mostOrderedHotels);
       }
-    } else if (selectedFilterType === 2) {
+    } else if (selectedFilterType === 1) {
       if (selectedEntityType === 2) {
         const mostOrderedFoods = _uniqueItems
           .map((item) => {
