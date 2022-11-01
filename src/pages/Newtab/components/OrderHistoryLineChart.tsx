@@ -140,7 +140,7 @@ export default function OrderHistoryLineChart({
 
       console.log('months', months, oldestDate.format());
 
-      for (let i = 0; i < months; i++) {
+      for (let i = 0; i <= months; i++) {
         const month = oldestDate.add(i, 'month').format('MMM YYYY');
         console.log('month', month);
         const orders = onlineOrders.filter((order) => {
