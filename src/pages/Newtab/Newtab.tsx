@@ -7,21 +7,6 @@ import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
 
-export const orderApps = [
-  {
-    label: 'All',
-    value: -1,
-  },
-  {
-    label: 'Zomato',
-    value: 0,
-  },
-  {
-    label: 'Swiggy',
-    value: 1,
-  },
-];
-
 const Newtab = () => {
   const [onlineOrders, setOnlineOrders] = React.useState<OnlineOrder[]>([]);
   const [allOrders, setAllOrders] = React.useState<OnlineOrder[]>([]);
@@ -33,6 +18,12 @@ const Newtab = () => {
   const [medianOrderCost, setMedianOrderCost] = React.useState<string>('');
   const [averageOrderCost, setAverageOrderCost] = React.useState<string>('');
   const [selectedOrderApp, setSelectedOrderApp] = React.useState<number>(-1);
+  const [orderApps, setOrderApps] = React.useState<
+    {
+      label: string;
+      value: number;
+    }[]
+  >([]);
 
   useEffect(() => {
     chrome.storage.local.get(['zomato', 'swiggy'], (result) => {
@@ -44,6 +35,41 @@ const Newtab = () => {
       let swiggyOrders: OnlineOrder[] = JSON.parse(
         result?.swiggy?.orders || '[]'
       );
+
+      if (zomatoOrders.length > 0) {
+        setOrderApps((prev) => [
+          ...prev,
+          {
+            label: 'Zomato',
+            value: 0,
+          },
+        ]);
+        setSelectedOrderApp(0);
+      }
+
+      if (swiggyOrders.length > 0) {
+        setOrderApps((prev) => [
+          ...prev,
+          {
+            label: 'Swiggy',
+            value: 1,
+          },
+        ]);
+
+        setSelectedOrderApp(1);
+      }
+
+      if (zomatoOrders.length > 0 && swiggyOrders.length > 0) {
+        setOrderApps((prev) => [
+          ...prev,
+          {
+            label: 'All',
+            value: -1,
+          },
+        ]);
+
+        setSelectedOrderApp(-1);
+      }
 
       let allOrders = [
         ...zomatoOrders.map((order) => ({
