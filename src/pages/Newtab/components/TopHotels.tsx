@@ -60,6 +60,22 @@ const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
   return null;
 };
 
+const CustomizedLabel = ({ x, y, stroke, value, name }: any) => {
+  return (
+    <text
+      x={x + 10}
+      y={y + 26}
+      dy={-4}
+      fill={stroke}
+      fontSize={14}
+      textAnchor="start"
+      color="white"
+    >
+      {name.length > 20 ? name.slice(0, 20) + '...' : name}
+    </text>
+  );
+};
+
 export default function TopHotels({
   onlineOrders,
   items,
@@ -191,12 +207,8 @@ export default function TopHotels({
         debounce={50}
       >
         <BarChart
-          data={chartData.map((x) => ({
-            ...x,
-            name: x.name.length > 20 ? x.name.slice(0, 20) + '...' : x.name,
-          }))}
+          data={chartData}
           layout="vertical"
-          margin={{ left: 40 }}
           barCategoryGap="20%"
           barGap={2}
           maxBarSize={10}
@@ -208,11 +220,18 @@ export default function TopHotels({
             type="category"
             axisLine={false}
             tickLine={false}
+            tick={false}
           />
           <Tooltip
             content={<CustomTooltip selectedFilterType={selectedFilterType} />}
           />
-          <Bar dataKey="value" fill="#8884d8" minPointSize={2} barSize={32} />
+          <Bar
+            dataKey="value"
+            fill="#8884d8"
+            minPointSize={2}
+            barSize={32}
+            label={<CustomizedLabel />}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
