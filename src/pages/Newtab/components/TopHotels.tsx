@@ -60,7 +60,8 @@ const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
   return null;
 };
 
-const CustomizedLabel = ({ x, y, stroke, value, name }: any) => {
+const CustomizedLabel = (props: any) => {
+  const { x, y, stroke, value, name, width } = props;
   return (
     <text
       x={x + 10}
@@ -70,7 +71,7 @@ const CustomizedLabel = ({ x, y, stroke, value, name }: any) => {
       fontSize={14}
       textAnchor="start"
     >
-      {name.length > 20 ? name.slice(0, 20) + '...' : name}
+      {name.length > 20 ? name.slice(0, width / 10) + '...' : name}
     </text>
   );
 };
