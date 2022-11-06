@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Snackalytics",
-  "description": "Zomato and Swiggy order analytics",
+  "name": "Snackalytics - Zomato & Swiggy Spending Calculator",
+  "description": "Calculates your spending on Zomato & Swiggy. Also shows you many other insights based on your order history.",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "action": {
