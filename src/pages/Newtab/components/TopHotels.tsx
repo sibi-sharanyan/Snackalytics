@@ -69,7 +69,6 @@ const CustomizedLabel = ({ x, y, stroke, value, name }: any) => {
       fill={stroke}
       fontSize={14}
       textAnchor="start"
-      color="white"
     >
       {name.length > 20 ? name.slice(0, 20) + '...' : name}
     </text>
