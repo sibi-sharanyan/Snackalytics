@@ -43,19 +43,30 @@ export const filterTypes = [
   },
 ];
 
-const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+  selectedFilterType,
+  selectedTimeRange,
+}: any) => {
   console.log(
     'active, payload, label',
     active,
     payload,
     label,
-    selectedFilterType
+    selectedFilterType,
+    selectedTimeRange
   );
   if (active && payload && payload.length) {
     if (selectedFilterType === 1) {
       return (
         <div className="bg-purple-500 border-none  text-white px-2 py-1">
-          <p className="text-md">{dayjs(label).format('MMM DD, YYYY')} </p>
+          <p className="text-md">
+            {dayjs(label).format(
+              selectedTimeRange !== 1 ? 'MMM YYYY' : 'MMM DD, YYYY'
+            )}
+          </p>
           <p className="text-xl">
             {currency(payload[0].value, {
               symbol: '₹',
@@ -66,7 +77,11 @@ const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
     } else {
       return (
         <div className="bg-purple-500 border-none  text-white px-2 py-1">
-          <p className="text-md">{dayjs(label).format('MMM DD, YYYY')} </p>
+          <p className="text-md">
+            {dayjs(label).format(
+              selectedTimeRange !== 1 ? 'MMM YYYY' : 'MMM DD, YYYY'
+            )}
+          </p>
           <p className="text-xl">{payload[0].value} orders</p>
         </div>
       );
@@ -242,7 +257,12 @@ export default function OrderHistoryLineChart({
           <XAxis dataKey="time" />
           <YAxis dataKey="value" />
           <Tooltip
-            content={<CustomTooltip selectedFilterType={selectedFilterType} />}
+            content={
+              <CustomTooltip
+                selectedFilterType={selectedFilterType}
+                selectedTimeRange={selectedTimeRange}
+              />
+            }
           />
         </LineChart>
       </ResponsiveContainer>
