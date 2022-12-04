@@ -14,7 +14,11 @@ import {
   BsTwitter,
   BsInfoCircleFill,
 } from 'react-icons/bs/index';
+
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import dayjs from 'dayjs';
+
+dayjs.extend(customParseFormat);
 
 const limit = pLimit(10);
 const ZOMATO_ORDER_QUERY_LIMIT = 500;
@@ -188,29 +192,35 @@ const Popup = () => {
           // order.details.resInfo.name
           // order.details.order.totalCost
 
-          const zomatoOrderMinimal = zomatoOrders.map((order) => {
-            return {
-              details: {
-                resInfo: {
-                  name: order.details.resInfo.name,
-                },
-                order: {
-                  totalCost: order.details.order.totalCost,
-                  items: {
-                    dish: order.details.order.items?.dish?.map((dish) => {
-                      return {
-                        itemName: dish.itemName,
-                        totalCost: dish.totalCost,
-                        quantity: dish.quantity,
-                        tagSlugs: dish.tagSlugs,
-                      };
-                    }),
+          const zomatoOrderMinimal = zomatoOrders
+            .filter((x) => x.details?.currentStatus === 'DELIVERED')
+            .map((order) => {
+              return {
+                details: {
+                  resInfo: {
+                    name: order.details.resInfo.name,
                   },
+                  order: {
+                    totalCost: order.details.order.totalCost,
+                    items: {
+                      dish: order.details.order.items?.dish?.map((dish) => {
+                        return {
+                          itemName: dish.itemName,
+                          totalCost: dish.totalCost,
+                          quantity: dish.quantity,
+                          tagSlugs: dish.tagSlugs,
+                        };
+                      }),
+                    },
+                  },
+                  orderDate: order.details.orderDate.split('at')[0],
+                  fullDate: dayjs(
+                    order.details.orderDate,
+                    'MMMM DD, YYYY at h:mm A'
+                  ).format(),
                 },
-                orderDate: order.details.orderDate.split('at')[0],
-              },
-            };
-          });
+              };
+            });
 
           console.log('zomatoOrderMinimal', zomatoOrderMinimal, zomatoOrders);
 

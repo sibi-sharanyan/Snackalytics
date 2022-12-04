@@ -18,6 +18,7 @@ interface Details {
     bgColorV2: BgColorV2;
     hashId: string;
     orderDate: string;
+    fullDate: string;
     paymentMethod: string;
     paymentMethodString: string;
     statusText: string;

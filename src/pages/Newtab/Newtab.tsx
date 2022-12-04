@@ -7,8 +7,22 @@ import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
 
+import 'react-modern-calendar-datepicker/lib/DatePicker.css';
+import DatePicker, { DayRange } from 'react-modern-calendar-datepicker';
+
 const Newtab = () => {
   const [onlineOrders, setOnlineOrders] = React.useState<OnlineOrder[]>([]);
+  const [selectedDayRange, setSelectedDayRange] = React.useState<DayRange>({
+    from: null,
+    to: null,
+  });
+  const [selectedDayRangeDayJs, setSelectedDayRangeDayJs] = React.useState<{
+    from: dayjs.Dayjs | null;
+    to: dayjs.Dayjs | null;
+  }>({
+    from: null,
+    to: null,
+  });
   const [allOrders, setAllOrders] = React.useState<OnlineOrder[]>([]);
   const [uniqueHotels, setUniqueHotels] = React.useState<string[]>([]);
   const [selectedHotel, setSelectedHotel] = React.useState<string>('');
@@ -24,6 +38,20 @@ const Newtab = () => {
       value: number;
     }[]
   >([]);
+
+  const renderCustomInput = ({ ref }: any) => (
+    <input
+      readOnly
+      ref={ref} // necessary
+      placeholder="Select a day range"
+      value={
+        selectedDayRange.from && selectedDayRange.to
+          ? `${selectedDayRange.from?.day}/${selectedDayRange.from?.month}/${selectedDayRange.from?.year} - ${selectedDayRange.to?.day}/${selectedDayRange.to?.month}/${selectedDayRange.to?.year}`
+          : ''
+      }
+      className="input input-bordered input-primary w-full max-w-xs"
+    />
+  );
 
   useEffect(() => {
     chrome.storage.local.get(['zomato', 'swiggy'], (result) => {
@@ -81,9 +109,29 @@ const Newtab = () => {
           orderApp: OrderApp.Swiggy,
         })),
       ];
+      console.log('allOrders', allOrders);
       setAllOrders(allOrders);
     });
   }, []);
+
+  // useEffect(() => {
+  //   const ordersWithinRange = onlineOrders.filter((order) => {
+  //     if (selectedDayRangeDayJs.from && selectedDayRangeDayJs.to) {
+
+  //       if (!order.details.fullDate) {
+  //         return false;
+  //       }
+
+  //       return (
+  //         dayjs(order.details.fullDate).isAfter(selectedDayRangeDayJs.from) &&
+  //         dayjs(order.details.fullDate).isBefore(selectedDayRangeDayJs.to)
+  //       );
+  //     }
+  //     return true;
+  //   });
+
+  //   setOnlineOrders(ordersWithinRange);
+  // }, [selectedDayRangeDayJs, onlineOrders]);
 
   useEffect(() => {
     if (selectedOrderApp === -1) {
@@ -196,6 +244,35 @@ const Newtab = () => {
             <option value={hotel}>{hotel}</option>
           ))}
         </select> */}
+        <DatePicker
+          value={selectedDayRange}
+          onChange={(range) => {
+            console.log(range);
+
+            if (range.from && range.to) {
+              const fromInDayJs = dayjs(
+                `${range.from.day}/${range.from.month}/${range.from.year}`,
+                'DD/MM/YYYY'
+              );
+
+              const toInDayJs = dayjs(
+                `${range.to.day}/${range.to.month}/${range.to.year}`,
+                'DD/MM/YYYY'
+              );
+
+              setSelectedDayRangeDayJs({
+                from: fromInDayJs,
+                to: toInDayJs,
+              });
+            }
+
+            setSelectedDayRange(range);
+          }}
+          inputPlaceholder="Select a day range"
+          renderInput={renderCustomInput}
+          colorPrimary="#A500FF"
+          colorPrimaryLight="#E1ACFF"
+        />
         <div className="flex w-full">
           <div className="flex w-1/2">
             <div className="space-y-10 shadow-lg p-6">

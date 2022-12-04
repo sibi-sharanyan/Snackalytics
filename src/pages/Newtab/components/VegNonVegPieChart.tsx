@@ -65,8 +65,6 @@ export default function VegNonVegPieChart({
     );
     const eggItems = allItems.filter((item) => item.tagSlugs?.includes('egg'));
 
-    console.log('allItems', allItems, vegItems, nonVegItems, eggItems);
-
     const vegItemsTotalCost = vegItems.reduce(
       (acc, item) => acc + item.totalCost,
       0
