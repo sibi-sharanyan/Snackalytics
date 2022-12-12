@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import '../../assets/styles/tailwind.css';
 import { Dish, IHighestOrder, OnlineOrder, OrderApp } from '../../types';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
 import TopHotels from './components/TopHotels';
 import OrderHistoryLineChart from './components/OrderHistoryLineChart';
 import VegNonVegPieChart from './components/VegNonVegPieChart';
@@ -10,8 +12,14 @@ import VegNonVegPieChart from './components/VegNonVegPieChart';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker, { DayRange } from 'react-modern-calendar-datepicker';
 
+dayjs.extend(customParseFormat);
+
 const Newtab = () => {
   const [onlineOrders, setOnlineOrders] = React.useState<OnlineOrder[]>([]);
+  const [onlineAllOrders, setAllOnlineOrders] = React.useState<OnlineOrder[]>(
+    []
+  );
+
   const [selectedDayRange, setSelectedDayRange] = React.useState<DayRange>({
     from: null,
     to: null,
@@ -114,34 +122,40 @@ const Newtab = () => {
     });
   }, []);
 
-  // useEffect(() => {
-  //   const ordersWithinRange = onlineOrders.filter((order) => {
-  //     if (selectedDayRangeDayJs.from && selectedDayRangeDayJs.to) {
+  useEffect(() => {
+    const ordersWithinRange = onlineAllOrders.filter((order) => {
+      if (selectedDayRangeDayJs.from && selectedDayRangeDayJs.to) {
+        if (!order.details.fullDate) {
+          return false;
+        }
 
-  //       if (!order.details.fullDate) {
-  //         return false;
-  //       }
+        return (
+          dayjs(order.details.fullDate).isAfter(selectedDayRangeDayJs.from) &&
+          dayjs(order.details.fullDate).isBefore(selectedDayRangeDayJs.to)
+        );
+      }
+      return true;
+    });
 
-  //       return (
-  //         dayjs(order.details.fullDate).isAfter(selectedDayRangeDayJs.from) &&
-  //         dayjs(order.details.fullDate).isBefore(selectedDayRangeDayJs.to)
-  //       );
-  //     }
-  //     return true;
-  //   });
-
-  //   setOnlineOrders(ordersWithinRange);
-  // }, [selectedDayRangeDayJs, onlineOrders]);
+    setOnlineOrders(ordersWithinRange);
+  }, [selectedDayRangeDayJs, onlineAllOrders, setOnlineOrders]);
 
   useEffect(() => {
     if (selectedOrderApp === -1) {
       setOnlineOrders(allOrders);
+      setAllOnlineOrders(allOrders);
     } else if (selectedOrderApp === 0) {
       setOnlineOrders(
         allOrders.filter((order) => order.orderApp === OrderApp.Zomato)
       );
+      setAllOnlineOrders(
+        allOrders.filter((order) => order.orderApp === OrderApp.Zomato)
+      );
     } else if (selectedOrderApp === 1) {
       setOnlineOrders(
+        allOrders.filter((order) => order.orderApp === OrderApp.Swiggy)
+      );
+      setAllOnlineOrders(
         allOrders.filter((order) => order.orderApp === OrderApp.Swiggy)
       );
     }
@@ -202,7 +216,7 @@ const Newtab = () => {
     );
 
     setAverageOrderCost(
-      currency(finalTotalPrice / onlineOrders.length).format({
+      currency(finalTotalPrice / onlineOrders.length || 0).format({
         symbol: '₹',
       })
     );
@@ -252,12 +266,12 @@ const Newtab = () => {
             if (range.from && range.to) {
               const fromInDayJs = dayjs(
                 `${range.from.day}/${range.from.month}/${range.from.year}`,
-                'DD/MM/YYYY'
+                'D/M/YYYY'
               );
 
               const toInDayJs = dayjs(
                 `${range.to.day}/${range.to.month}/${range.to.year}`,
-                'DD/MM/YYYY'
+                'D/M/YYYY'
               );
 
               setSelectedDayRangeDayJs({
