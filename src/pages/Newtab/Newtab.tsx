@@ -117,7 +117,7 @@ const Newtab = () => {
           orderApp: OrderApp.Swiggy,
         })),
       ];
-      console.log('allOrders', allOrders);
+      // console.log('allOrders', allOrders);
       setAllOrders(allOrders);
     });
   }, []);

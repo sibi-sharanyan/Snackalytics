@@ -39,11 +39,7 @@ const Popup = () => {
 
   useEffect(() => {
     chrome.tabs.query({ currentWindow: true, active: true }, function (tabs) {
-      console.log(tabs[0].url, tabs[0]);
-
       const url = new URL(tabs[0].url as string);
-
-      console.log(url.hostname);
 
       if (url.hostname === 'www.zomato.com' || url.hostname === 'zomato.com') {
         setIsZomatoTab(true);
@@ -58,7 +54,6 @@ const Popup = () => {
 
   useEffect(() => {
     chrome.storage.local.get([isZomatoTab ? 'zomato' : 'swiggy'], (result) => {
-      console.log('Value currently is ', result.reportGeneratedOn);
       if (isZomatoTab && result.zomato) {
         setReportGeneratedOn(result.zomato.reportGeneratedOn);
         setIsPreviousReportPresent(true);
@@ -72,15 +67,11 @@ const Popup = () => {
   const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
 
   const generateZomatoReport = () => {
-    console.log('generateReport', chrome);
-
     chrome.cookies.getAll(
       { url: 'https://www.zomato.com' },
       async (cookies) => {
         setIsLoading(true);
         try {
-          console.log('cookies', cookies);
-
           const cookieMap: { [name: string]: string } = {};
 
           cookies.forEach((cookie) => {
@@ -165,8 +156,6 @@ const Popup = () => {
 
           const zomatoOrders: OnlineOrder[] = [];
 
-          console.log('orderHashIds', orderHashIds);
-
           const orderRequests = orderHashIds
             .slice(0, ZOMATO_ORDER_QUERY_LIMIT)
             .map((hashId) => {
@@ -222,8 +211,6 @@ const Popup = () => {
               };
             });
 
-          console.log('zomatoOrderMinimal', zomatoOrderMinimal, zomatoOrders);
-
           chrome.storage.local.set(
             {
               zomato: {
@@ -232,13 +219,11 @@ const Popup = () => {
               },
             },
             () => {
-              console.log('Report stored in chrome storage');
               setChromeStorageUpdates((prev) => prev + 1);
               setIsLoading(false);
             }
           );
         } catch (err) {
-          console.log('cookies', cookies);
           setIsLoading(false);
         }
       }
@@ -251,7 +236,6 @@ const Popup = () => {
       async (cookies) => {
         // setIsLoading(true);
         let ordersCollection: any[] = [];
-        console.log('cookies', cookies);
 
         const cookieMap: { [name: string]: string } = {};
 
@@ -259,7 +243,6 @@ const Popup = () => {
           cookieMap[cookie.name] = cookie.value;
         });
 
-        console.log('cookieMap', cookieMap);
         setIsLoading(true);
         setTotalRequestsRequired(10);
 
@@ -279,7 +262,6 @@ const Popup = () => {
         let orderId = '';
         for (let i = 0; i < 100; i++) {
           //Swiggy limits orders
-          console.log('order loop', i);
           const {
             data: {
               data: { orders, total_orders },
@@ -304,8 +286,6 @@ const Popup = () => {
           ordersCollection = [...ordersCollection, ...orders];
           setRequestsMade((prev) => prev + 1);
         }
-
-        console.log('ordersCollection', ordersCollection);
 
         const swiggyOrderMinimal = ordersCollection
           .filter((order) => order.order_delivery_status === 'delivered')
@@ -333,8 +313,6 @@ const Popup = () => {
             };
           });
 
-        console.log('swiggyOrderMinimal', swiggyOrderMinimal);
-
         chrome.storage.local.set(
           {
             swiggy: {
@@ -343,7 +321,6 @@ const Popup = () => {
             },
           },
           () => {
-            console.log('Report stored in chrome storage');
             setChromeStorageUpdates((prev) => prev + 1);
             setIsLoading(false);
           }
