@@ -28,7 +28,7 @@ const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
       return (
         <div className="bg-purple-500 border-none  text-white px-2 py-1">
           <p className="text-md">{payload[0].name} </p>
-          <p className="text-xl">{payload[0].value} orders</p>
+          <p className="text-xl">{payload[0].value} items</p>
         </div>
       );
     }
