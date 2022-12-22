@@ -11,6 +11,7 @@ import VegNonVegPieChart from './components/VegNonVegPieChart';
 
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker, { DayRange } from 'react-modern-calendar-datepicker';
+import SocialHandle from '../common/SocialHandle';
 
 dayjs.extend(customParseFormat);
 
@@ -364,6 +365,10 @@ const Newtab = () => {
           items={items}
           uniqueHotels={uniqueHotels}
         />
+
+        <div className="pb-6">
+          <SocialHandle />
+        </div>
       </div>
     </div>
   );
