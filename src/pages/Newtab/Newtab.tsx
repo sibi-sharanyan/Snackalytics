@@ -232,17 +232,70 @@ const Newtab = () => {
       // }}
     >
       <div className="flex-col space-y-20 w-full h-full">
-        <select
-          className="select w-full max-w-xs mr-10 select-primary"
-          value={selectedOrderApp}
-          onChange={(e) => {
-            setSelectedOrderApp(Number(e.target.value));
-          }}
-        >
-          {orderApps.map((orderApp) => (
-            <option value={orderApp.value}>{orderApp.label}</option>
-          ))}
-        </select>
+        <div className="flex space-x-20">
+          <select
+            className="select w-full max-w-xs mr-10 select-primary"
+            value={selectedOrderApp}
+            onChange={(e) => {
+              setSelectedOrderApp(Number(e.target.value));
+            }}
+          >
+            {orderApps.map((orderApp) => (
+              <option value={orderApp.value}>{orderApp.label}</option>
+            ))}
+          </select>
+
+          <div className="">
+            <DatePicker
+              value={selectedDayRange}
+              onChange={(range) => {
+                console.log(range);
+
+                if (range.from && range.to) {
+                  const fromInDayJs = dayjs(
+                    `${range.from.day}/${range.from.month}/${range.from.year}`,
+                    'D/M/YYYY'
+                  );
+
+                  const toInDayJs = dayjs(
+                    `${range.to.day}/${range.to.month}/${range.to.year}`,
+                    'D/M/YYYY'
+                  );
+
+                  setSelectedDayRangeDayJs({
+                    from: fromInDayJs,
+                    to: toInDayJs,
+                  });
+                }
+
+                setSelectedDayRange(range);
+              }}
+              inputPlaceholder="Select a day range"
+              renderInput={renderCustomInput}
+              colorPrimary="#A500FF"
+              colorPrimaryLight="#E1ACFF"
+            />
+
+            {selectedDayRange.from && selectedDayRange.to && (
+              <button
+                className="btn btn-link"
+                onClick={() => {
+                  setSelectedDayRangeDayJs({
+                    from: null,
+                    to: null,
+                  });
+
+                  setSelectedDayRange({
+                    from: null,
+                    to: null,
+                  });
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
 
         {/* <select
           className="select w-full max-w-xs mr-10 select-primary"
@@ -258,35 +311,7 @@ const Newtab = () => {
             <option value={hotel}>{hotel}</option>
           ))}
         </select> */}
-        <DatePicker
-          value={selectedDayRange}
-          onChange={(range) => {
-            console.log(range);
 
-            if (range.from && range.to) {
-              const fromInDayJs = dayjs(
-                `${range.from.day}/${range.from.month}/${range.from.year}`,
-                'D/M/YYYY'
-              );
-
-              const toInDayJs = dayjs(
-                `${range.to.day}/${range.to.month}/${range.to.year}`,
-                'D/M/YYYY'
-              );
-
-              setSelectedDayRangeDayJs({
-                from: fromInDayJs,
-                to: toInDayJs,
-              });
-            }
-
-            setSelectedDayRange(range);
-          }}
-          inputPlaceholder="Select a day range"
-          renderInput={renderCustomInput}
-          colorPrimary="#A500FF"
-          colorPrimaryLight="#E1ACFF"
-        />
         <div className="flex w-full">
           <div className="flex w-1/2">
             <div className="space-y-10 shadow-lg p-6">
