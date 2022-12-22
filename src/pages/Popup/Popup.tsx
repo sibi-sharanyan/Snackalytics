@@ -307,29 +307,31 @@ const Popup = () => {
 
         console.log('ordersCollection', ordersCollection);
 
-        const swiggyOrderMinimal = ordersCollection.map((order) => {
-          return {
-            details: {
-              resInfo: {
-                name: order.restaurant_name,
-              },
-              order: {
-                totalCost: order.order_total,
-                items: {
-                  dish: order.order_items.map((dish: any) => {
-                    return {
-                      itemName: dish.name,
-                      totalCost: Number(dish.final_price),
-                      quantity: Number(dish.quantity),
-                      tagSlugs: [dish.is_veg === '1' ? 'veg' : 'non-veg'],
-                    };
-                  }),
+        const swiggyOrderMinimal = ordersCollection
+          .filter((order) => order.order_delivery_status === 'delivered')
+          .map((order) => {
+            return {
+              details: {
+                resInfo: {
+                  name: order.restaurant_name,
                 },
+                order: {
+                  totalCost: order.order_total,
+                  items: {
+                    dish: order.order_items.map((dish: any) => {
+                      return {
+                        itemName: dish.name,
+                        totalCost: Number(dish.final_price),
+                        quantity: Number(dish.quantity),
+                        tagSlugs: [dish.is_veg === '1' ? 'veg' : 'non-veg'],
+                      };
+                    }),
+                  },
+                },
+                orderDate: dayjs(order.updated_at).format('MMM DD, YYYY'),
               },
-              orderDate: dayjs(order.updated_at).format('MMM DD, YYYY'),
-            },
-          };
-        });
+            };
+          });
 
         console.log('swiggyOrderMinimal', swiggyOrderMinimal);
 
