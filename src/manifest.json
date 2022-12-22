@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Snackalytics - Zomato & Swiggy Spending Calc",
-  "description": "Calculates your spending on Zomato & Swiggy. Also shows you many other insights based on your order history.",
+  "name": "Zomato & Swiggy Spending Calc - Snackalytics",
+  "description": "Analyse your orders on Swiggy and Zomato to get valuable metrics and insights on your eating and spending habits.",
   "options_page": "options.html",
   "background": { "service_worker": "background.bundle.js" },
   "action": {
@@ -12,7 +12,7 @@
   "icons": {
     "128": "icon-128.png"
   },
-  "version": "0.0.2",
+  "version": "0.0.3",
   "permissions": ["storage", "cookies", "unlimitedStorage", "activeTab"],
   "host_permissions": ["*://*.zomato.com/", "*://*.swiggy.com/"],
   "content_scripts": [
