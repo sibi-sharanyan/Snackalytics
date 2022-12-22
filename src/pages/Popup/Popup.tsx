@@ -310,6 +310,7 @@ const Popup = () => {
                   },
                 },
                 orderDate: dayjs(order.updated_at).format('MMM DD, YYYY'),
+                fullDate: dayjs(order.order_time).format(),
               },
             };
           });
