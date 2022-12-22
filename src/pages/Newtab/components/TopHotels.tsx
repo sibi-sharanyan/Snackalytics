@@ -28,13 +28,6 @@ export const entityTypes = [
 ];
 
 const CustomTooltip = ({ active, payload, label, selectedFilterType }: any) => {
-  console.log(
-    'active, payload, label',
-    active,
-    payload,
-    label,
-    selectedFilterType
-  );
   if (active && payload && payload.length) {
     if (selectedFilterType === 1) {
       return (
@@ -70,6 +63,7 @@ const CustomizedLabel = (props: any) => {
       fill={stroke}
       fontSize={14}
       textAnchor="start"
+      className="font-semibold"
     >
       {name.length > 20 ? name.slice(0, width / 10) + '...' : name}
     </text>
@@ -231,6 +225,7 @@ export default function TopHotels({
             minPointSize={2}
             barSize={32}
             label={<CustomizedLabel />}
+            isAnimationActive={false}
           />
         </BarChart>
       </ResponsiveContainer>

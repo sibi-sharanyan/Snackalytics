@@ -50,14 +50,6 @@ const CustomTooltip = ({
   selectedFilterType,
   selectedTimeRange,
 }: any) => {
-  console.log(
-    'active, payload, label',
-    active,
-    payload,
-    label,
-    selectedFilterType,
-    selectedTimeRange
-  );
   if (active && payload && payload.length) {
     if (selectedFilterType === 1) {
       return (
