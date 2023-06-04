@@ -18,7 +18,7 @@ Ever wondered how much you've spent on ordering food online on apps like Zomato 
 
 
 ## Live Demo
-You can check out the live demo of the project [here](https://your-demo-link).
+You can check out the project in the chrome web store [here](https://chrome.google.com/webstore/detail/zomato-swiggy-spending-ca/ldgegkoaijbakkmcfcjofbaaoknjbedj).
 
 ## Built With
 - [TypeScript](https://www.typescriptlang.org/) - Strict syntactical superset of JavaScript adding optional static typing.
