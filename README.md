@@ -26,3 +26,23 @@ You can check out the project in the chrome web store [here](https://chrome.goog
 - [TailwindCSS](https://tailwindcss.com/) - A utility-first CSS framework.
 - [DaisyUI](https://daisyui.com/) - Plugin for Tailwind CSS that adds beautiful UI components.
 - [Recharts](http://recharts.org/) - A composable charting library built on React components.
+
+
+# Media Mentions
+
+We are thrilled to see **Snackalytics** being mentioned in various news outlets. Here are some of them:
+<div style="display: flex; justify-content: space-around; align-items: center">
+
+<a href="https://www.timesnownews.com/technology-science/this-google-chrome-extension-lets-you-check-how-much-money-you-spend-on-zomato-and-swiggy-article-95940228" target="_blank">
+    <img src="https://www.timesnownews.com/assets/icons/svg/logo-large.svg" alt="Times Now News" width="150"/>
+</a>
+
+<a href="https://www.business-standard.com/article/current-affairs/want-to-track-your-lifetime-spending-on-zomato-swiggy-amazon-or-uber-122120900753_1.html" target="_blank">
+    <img src="https://bsmedia.business-standard.com/include/_mod/site/html5/images/business-standard-logo.png" alt="Business Standard" width="150"/>
+</a>
+
+<a href="https://www.thetechoutlook.com/news/technology/apps-technology/know-how-much-have-you-spent-on-ordering-food-online-till-now/" target="_blank">
+    <img src="https://www.thetechoutlook.com/wp-content/uploads/2020/02/tto-logo-4-1-2.png" alt="The Tech Outlook" width="150"/>
+</a>
+
+</div>
