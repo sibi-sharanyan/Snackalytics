@@ -2,7 +2,7 @@
 
 Ever wondered how much you've spent on ordering food online on apps like Zomato and Swiggy? Well, we did too. So we built **Snackalytics**, a chrome extension that analyses your Swiggy and Zomato order history, giving you valuable metrics and insights. It was built with TypeScript, React, TailwindCSS, DaisyUI, Recharts, and lots of love for food.
 
-<img src="https://i.imgur.com/Ffml6ik.gifv" width="700" height="400" />
+<img src="https://i.imgur.com/Ffml6ik.gif" width="700" height="400" />
 
 ## Features
 
